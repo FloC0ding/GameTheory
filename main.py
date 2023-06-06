@@ -1,8 +1,8 @@
 import graph as G
 
 from kivy.config import Config
-Config.set('graphics', 'width', '700')
-Config.set('graphics', 'height', '700')
+Config.set('graphics', 'width', '600')
+Config.set('graphics', 'height', '600')
 Config.set('graphics', 'resizable', False)
 
 from kivy.core.window import Window
@@ -19,7 +19,9 @@ from kivy.vector import Vector
 import random as rand
 
 
-size = 20      #35 still reasonably fast
+
+size = 4       #35 still reasonably fast
+n = size-1      #number of fields of the labyrinth per row or line
 
 width = Window.size[0]
 height = Window.size[1]
@@ -29,22 +31,21 @@ wall_y = height/(size-1)
 
 maze = G.Graph(size)
 
+#player
+p_size = 10
+
 
 class SimGame(Widget):
     pass
 
 class Maze(Widget):
-
-    p1 = (x, y) = (-1, -1)
+    #p1
+    p1 = (n*wall_x/2, n*wall_y/2)
 
     def __init__(self, **kwargs):
         super(Maze, self).__init__(**kwargs)
         with self.canvas: 
 
-            #for v in maze.vertices:
-                #print(str(v.pos_x) +", "+ str(v.pos_y))
-            #    Line(points=(v.pos_x*wall_x, v.pos_y*wall_y, v.pos_x*wall_x, v.pos_y*wall_y), width =2)
-            #print all edges from Graph maze
             Color(1, 0, 0)
             for e in maze.edges:
                 u, v, w = e.u, e.v, e.w
@@ -70,19 +71,20 @@ class Maze(Widget):
         #input keyboard
     
     
-    
     def update(self, dt):
         print("boop")
 
 
-    def pc_player(self):
-        pass
-    
+    def pc_player(self, dt):
+        with self.canvas:
+            Color(0, 0, 1)
+            if size % 2 == 1: Rectangle(pos=(size * wall_x/2 - p_size/2, size* wall_y/2 - p_size/2), size=(p_size, p_size))    
+            else : Rectangle(pos=((size-1) * wall_x/2 - p_size/2, (size-1)* wall_y/2 - p_size/2), size=(p_size, p_size)) 
 
 class MazeApp(App):
     def build(self):
         simulation = Maze()
-        Clock.schedule_interval(simulation.update, 5)
+        Clock.schedule_interval(simulation.pc_player, 2)
         return simulation
 
 
