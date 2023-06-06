@@ -1,4 +1,5 @@
 import graph as G
+import Agent
 
 from kivy.config import Config
 Config.set('graphics', 'width', '700')
@@ -57,6 +58,8 @@ class Maze(Widget):
             pass
         with self.canvas.after:
             pass
+        
+        self.player = Agent(rand.randint(0,size), rand.randint(0,size), 0, 0, 0)
 
         #input keyboard 
         """super(MyKeyboardListener, self).__init__(**kwargs)
