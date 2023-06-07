@@ -21,7 +21,7 @@ import random as rand
 
 
 
-size = 10       #35 still reasonably fast
+size = 6       #35 still reasonably fast
 n = size-1      #number of fields of the labyrinth per row or line
 
 width = Window.size[0]
@@ -44,8 +44,9 @@ class SimGame(Widget):
 class Maze(Widget):
 
     start = False
-    old_pos = G.Vertex(-1, -1)
+    finished = False
     p1 = A.Agent(-1, -1, -1, -1, 0, 0, [], 0, 0)
+    count = 0
 
     def __init__(self, **kwargs):
         super(Maze, self).__init__(**kwargs)
@@ -54,9 +55,10 @@ class Maze(Widget):
             Color(1, 0, 0)
             for e in maze.edges:
                 u, v, w = e.u, e.v, e.w
-                if(rand.randint(0, 100) < 50): Color(w+4, 0, 0)
-                else: Color(0, w+4, 0)
-                
+                #if(rand.randint(0, 100) < 50): Color(w+4, 0, 0)
+                #else: Color(0, w+4, 0)
+                Color(1, 0, 0)
+
                 Line(points=(u.pos_x*wall_x, u.pos_y*wall_y, v.pos_x*wall_x, v.pos_y*wall_y), width = 4)
 
         with self.canvas.before:
@@ -72,7 +74,6 @@ class Maze(Widget):
             self.p1.pos_x = n/2
             self.p1.pos_y = n/2
 
-        print
 
         a = maze.check_edge(self.p1)
         """print(a)
@@ -89,7 +90,8 @@ class Maze(Widget):
 
     def pc_player(self, dt):
         with self.canvas:
-            
+            if self.finished: return    #maze was finished stop execution
+
             #overwriting old position with blank
             if not self.start:
                 self.start = True
@@ -105,6 +107,15 @@ class Maze(Widget):
             
             #call walk function
             self.pc_dfs_walk ()
+
+            self.count += 1
+
+            #check if maze was finished
+            if not(0 <= self.p1.pos_x < n and 0 <= self.p1.pos_y < n):
+                self.finished = True
+                print(self.count)
+
+
             
             
 
