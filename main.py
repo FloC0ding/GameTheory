@@ -45,7 +45,7 @@ class Maze(Widget):
 
     start = False
     old_pos = G.Vertex(-1, -1)
-    p1 = A.Agent(-1, -1, 0, 0, 0, 0, 0)
+    p1 = A.Agent(-1, -1, 0, 0, [], 0, 0)
 
     def __init__(self, **kwargs):
         super(Maze, self).__init__(**kwargs)
@@ -89,19 +89,23 @@ class Maze(Widget):
 
     def pc_player(self, dt):
         with self.canvas:
+            
+            #overwriting old position with blank
+            if not self.start:
+                self.start = True
+                self.old_pos.pos_x, self.old_pos.pos_y = self.p1.pos_x, self.p1.pos_y
+            else:
+                Color(0, 0, 0)
+                self.draw_player(self.old_pos)
+                self.old_pos.pos_x, self.old_pos.pos_y = self.p1.pos_x, self.p1.pos_y
+
 
             Color(0, 0, 1)
-            self.draw_player()
+            self.draw_player(G.Vertex(self.p1.pos_x, self.p1.pos_y))
 
-            print("_____________")
-            print(self.p1.pos_x)
-            print(self.p1.pos_y)
 
             #trying out movement with check_edge function for random player with no memory
             a = maze.check_edge(self.p1)
-
-            print("directions: ")
-            print(a)
 
             directions = []     #saves possible current directions  0 = up, 1 = right, 2 = bottom, 3 = left
             for i in range(0, 4):
@@ -116,11 +120,14 @@ class Maze(Widget):
 
 
 
-    #draws p1 at his current position, can be changed to accept an Agent object and draw this object
+    #draws p1 at his current position, needs to be changed to accept an Agent object and draw this object
     def draw_player(self):
         with self.canvas:
             Rectangle(pos=((self.p1.pos_x) * wall_x - p_size/2, (self.p1.pos_y) * wall_y- p_size/2), size=(p_size, p_size))
 
+    def draw_player(self, v):
+        with self.canvas:
+            Rectangle(pos=((v.pos_x) * wall_x - p_size/2, (v.pos_y) * wall_y- p_size/2), size=(p_size, p_size))
 
 class MazeApp(App):
     def build(self):

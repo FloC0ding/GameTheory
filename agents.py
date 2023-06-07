@@ -8,6 +8,7 @@ class Agent:
         self.collab_prob = collab_prob
         self.lab = lab
         
+        #change position x, y attribute to an vertex attribute and maybe add old position into the agent!!!
         
     def move_x (self, value, min_x, max_x):
         if value > 0:
