@@ -1,7 +1,11 @@
+import graph as G
+
 class Agent:
-    def __init__(self, pos_x, pos_y, collab_prob, speed, sight, memory, lab):
+    def __init__(self, pos_x, pos_y, old_x, old_y, collab_prob, speed, sight, memory, lab):
         self.pos_x = pos_x
         self.pos_y = pos_y
+        self.old_x = old_x
+        self.old_y = old_y
         self.speed = speed
         self.sight = sight
         self.memory = memory
