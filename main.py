@@ -1,5 +1,5 @@
 import graph as G
-import Agent
+import agents as A
 
 from kivy.config import Config
 Config.set('graphics', 'width', '600')
@@ -21,14 +21,14 @@ import random as rand
 
 
 
-size = 4       #35 still reasonably fast
+size = 10       #35 still reasonably fast
 n = size-1      #number of fields of the labyrinth per row or line
 
 width = Window.size[0]
 height = Window.size[1]
 
-wall_x = width/(size-1)
-wall_y = height/(size-1)
+wall_x = width/(n)
+wall_y = height/(n)
 
 maze = G.Graph(size)
 
@@ -36,12 +36,16 @@ maze = G.Graph(size)
 p_size = 10
 
 
+
+
 class SimGame(Widget):
     pass
 
 class Maze(Widget):
-    #p1
-    p1 = (n*wall_x/2, n*wall_y/2)
+
+    start = False
+    old_pos = G.Vertex(-1, -1)
+    p1 = A.Agent(-1, -1, 0, 0, 0, 0, 0)
 
     def __init__(self, **kwargs):
         super(Maze, self).__init__(**kwargs)
@@ -59,19 +63,24 @@ class Maze(Widget):
             pass
         with self.canvas.after:
             pass
-        
-        self.player = Agent(rand.randint(0,size), rand.randint(0,size), 0, 0, 0)
 
-        #input keyboard 
-        """super(MyKeyboardListener, self).__init__(**kwargs)
-        self._keyboard = Window.request_keyboard(
-            self._keyboard_closed, self, 'text')
-        if self._keyboard.widget:
-            # If it exists, this widget is a VKeyboard object which you can use
-            # to change the keyboard layout.
-            pass
-        self._keyboard.bind(on_key_down=self._on_keyboard_down)"""
-        #input keyboard
+        #initialize p1 position
+        if n % 2 == 0:
+            self.p1.pos_x = (n+1)/2
+            self.p1.pos_y = (n+1)/2
+        else :
+            self.p1.pos_x = n/2
+            self.p1.pos_y = n/2
+
+        print
+
+        a = maze.check_edge(self.p1)
+        print(a)
+        print(self.p1.pos_x)
+        print(self.p1.pos_y)
+        
+        #self.player = Agent(rand.randint(0,size), rand.randint(0,size), 0, 0, 0)
+
     
     
     def update(self, dt):
@@ -80,14 +89,43 @@ class Maze(Widget):
 
     def pc_player(self, dt):
         with self.canvas:
+
             Color(0, 0, 1)
-            if size % 2 == 1: Rectangle(pos=(size * wall_x/2 - p_size/2, size* wall_y/2 - p_size/2), size=(p_size, p_size))    
-            else : Rectangle(pos=((size-1) * wall_x/2 - p_size/2, (size-1)* wall_y/2 - p_size/2), size=(p_size, p_size)) 
+            self.draw_player()
+
+            print("_____________")
+            print(self.p1.pos_x)
+            print(self.p1.pos_y)
+
+            #trying out movement with check_edge function for random player with no memory
+            a = maze.check_edge(self.p1)
+
+            print("directions: ")
+            print(a)
+
+            directions = []     #saves possible current directions  0 = up, 1 = right, 2 = bottom, 3 = left
+            for i in range(0, 4):
+                if a[i]: directions.append(i)
+            
+            r = rand.randint(0, len(directions)-1)
+            if directions[r] == 0: self.p1.pos_y+=1
+            elif directions[r] == 1: self.p1.pos_x+=1
+            elif directions[r] == 2: self.p1.pos_y-=1
+            else: self.p1.pos_x-=1
+
+
+
+
+    #draws p1 at his current position, can be changed to accept an Agent object and draw this object
+    def draw_player(self):
+        with self.canvas:
+            Rectangle(pos=((self.p1.pos_x) * wall_x - p_size/2, (self.p1.pos_y) * wall_y- p_size/2), size=(p_size, p_size))
+
 
 class MazeApp(App):
     def build(self):
         simulation = Maze()
-        Clock.schedule_interval(simulation.pc_player, 2)
+        Clock.schedule_interval(simulation.pc_player, 0.1)
         return simulation
 
 

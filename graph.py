@@ -1,4 +1,5 @@
 import random as rand
+import agents as agent
 
 class Vertex:       #x and y are positions in maze
     def __init__(self, x, y):
@@ -56,6 +57,9 @@ def helper2(v, F):
 class Graph:
     vertices = set()
     edges = []
+
+    #maps verticex a to an array of vertices that are neighbours vertex a
+    neighbour_edges = {}
     
     #maybe add edges in format where each vertex saves it's neighbours (dictionary)
 
@@ -125,17 +129,50 @@ class Graph:
 
                 #delete u and merge into v
                 mst_edges.append(Edge(u, v, w))
-                mst_edges.append(Edge(v, u, w))
+                #adding symmetric edges not necessary to draw maze      (maybe remove for efficiency)
+                mst_edges.append(Edge(v, u, w))    
 
                 zhk_v = helper2(v, F)
                               
                 helper1(u, zhk_v, F)
 
         self.edges = mst_edges
-        
-        
+
+        #implement neighbour edges 
+        for v in self.vertices:
+            self.neighbour_edges[v] = []
+
+        for e in mst_edges:
+            u, v, w = e.u, e.v, e.w
+            if not(v in self.neighbour_edges[u]): self.neighbour_edges[u].append(v)
+            if not(u in self.neighbour_edges[v]): self.neighbour_edges[v].append(u)
+
+        """for v in self.neighbour_edges:
+            s = ""
+            for u in self.neighbour_edges[v]:
+                s = s+"("+str(u.pos_x)+", "+str(u.pos_y)+"), "
+            print("("+str(v.pos_x)+", "+str(v.pos_y)+"): "+s)"""
         
 
+    #returns boolean array with four entries [top, right, bottom, left] each entry tells if there's a wall in this direciton
+    #true: no wall, false: wall
+    def check_edge(self, agent):      
+        
+        a = []
+        u, v = Vertex(int(agent.pos_x-0.5), int(agent.pos_y+0.5)), Vertex(int(agent.pos_x+0.5), int(agent.pos_y+0.5))
+        a.append(self.check_edge_help(u, v))
+        u, v = Vertex(int(agent.pos_x+0.5), int(agent.pos_y+0.5)), Vertex(int(agent.pos_x+0.5), int(agent.pos_y-0.5))
+        a.append(self.check_edge_help(u, v))
+        u, v = Vertex(int(agent.pos_x+0.5), int(agent.pos_y-0.5)), Vertex(int(agent.pos_x-0.5), int(agent.pos_y-0.5))
+        a.append(self.check_edge_help(u, v))
+        u, v = Vertex(int(agent.pos_x-0.5), int(agent.pos_y+0.5)), Vertex(int(agent.pos_x-0.5), int(agent.pos_y-0.5))
+        a.append(self.check_edge_help(u, v))
+        return a
+
+    def check_edge_help(self, u, v):
+        for k in self.neighbour_edges[v]:
+            if k == u: return False
+        return True
 
 #printing functions
 """for k in F:
