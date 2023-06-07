@@ -45,7 +45,7 @@ class Maze(Widget):
 
     start = False
     old_pos = G.Vertex(-1, -1)
-    p1 = A.Agent(-1, -1, 0, 0, [], 0, 0)
+    p1 = A.Agent(-1, -1, -1, -1, 0, 0, [], 0, 0)
 
     def __init__(self, **kwargs):
         super(Maze, self).__init__(**kwargs)
@@ -93,11 +93,11 @@ class Maze(Widget):
             #overwriting old position with blank
             if not self.start:
                 self.start = True
-                self.old_pos.pos_x, self.old_pos.pos_y = self.p1.pos_x, self.p1.pos_y
+                self.p1.old_x, self.p1.old_y = self.p1.pos_x, self.p1.pos_y
             else:
                 Color(0, 0, 0)
-                self.draw_player(self.old_pos)
-                self.old_pos.pos_x, self.old_pos.pos_y = self.p1.pos_x, self.p1.pos_y
+                self.draw_player(G.Vertex(self.p1.old_x, self.p1.old_y))
+                self.p1.old_x, self.p1.old_y = self.p1.pos_x, self.p1.pos_y
 
 
             Color(0, 0, 1)
