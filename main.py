@@ -1,5 +1,7 @@
 import graph as G
 import agents as A
+import matplotlib.pyplot as plt
+from collections import Counter
 
 from kivy.config import Config
 Config.set('graphics', 'width', '600')
@@ -35,7 +37,7 @@ wall_y = height/(n)
 #player
 p_size = 10
 
-num_it = 15
+num_it = 15000
 c_temp = []
 
 class SimGame(Widget):
@@ -211,15 +213,32 @@ class Maze(Widget):
 class MazeApp(App):
     def build(self):
         simulation = Maze()
-        Clock.schedule_interval(simulation.pc_player, 0.01)
+        Clock.schedule_interval(simulation.pc_player, 0.0000000001)
         return simulation
 
 if __name__ == '__main__':
     MazeApp().run()
 
-        
+print(c_temp)        
 
+counter = Counter(c_temp)
+values = list(counter.keys())
+frequencies = list(counter.values())
 
+# Set up the bar graph
+plt.bar(values, frequencies)
+
+# Customize x-axis tick labels
+x_ticks = [f'{i}' for i in range(min(values), max(values) + 1, 5)]
+plt.xticks(range(min(values), max(values) + 1, 5), x_ticks)
+
+# Add labels and title
+plt.xlabel('Values')
+plt.ylabel('Frequency')
+plt.title('Value Frequency Bar Graph')
+
+# Display the bar graph
+plt.show()   
 
 
 
