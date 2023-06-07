@@ -55,15 +55,19 @@ def helper2(v, F):
                 return i
 
 class Graph:
-    vertices = set()
-    edges = []
+    #vertices = set()
+    #edges = []
 
     #maps verticex a to an array of vertices that are neighbours vertex a
-    neighbour_edges = {}
+    #neighbour_edges = {}
     
     #maybe add edges in format where each vertex saves it's neighbours (dictionary)
 
     def __init__(self, n):
+        self.vertices = set()
+        self.edges = []
+        self.neighbour_edges = {}
+
         if n <= 0: print("ERROR")
         for i in range(0, n):
             for j in range(0, n):
@@ -173,6 +177,13 @@ class Graph:
         for k in self.neighbour_edges[v]:
             if k == u: return False
         return True
+    
+    def print_edges(self):
+        for v in self.neighbour_edges:
+            s = ""
+            for u in self.neighbour_edges[v]:
+                s = s+"("+str(u.pos_x)+", "+str(u.pos_y)+"), "
+            print("("+str(v.pos_x)+", "+str(v.pos_y)+"): "+s)
 
 #printing functions
 """for k in F:

@@ -21,7 +21,7 @@ import random as rand
 
 
 
-size = 5       #35 still reasonably fast
+size = 10       #35 still reasonably fast
 n = size-1      #number of fields of the labyrinth per row or line
 
 width = Window.size[0]
@@ -30,37 +30,40 @@ height = Window.size[1]
 wall_x = width/(n)
 wall_y = height/(n)
 
-maze = G.Graph(size)
+#maze = G.Graph(size)
 
 #player
 p_size = 10
 
-num_it = 10
+num_it = 15
 c_temp = 0
 
 class SimGame(Widget):
     pass
 
 class Maze(Widget):
-    global maze
-    start = False
-    finished = False
-    p1 = A.Agent(-1, -1, -1, -1, 0, 0, [], 0, 0)
-    count = 0
+
+    visited = []
+    stack = []
 
     def __init__(self, **kwargs):
         super(Maze, self).__init__(**kwargs)
-        with self.canvas: 
+        with self.canvas:
+            self.maze = G.Graph(size) 
+            self.count = 0
+            self.start = False
+            self.finished = False
+            self.p1 = A.Agent(-1, -1, -1, -1, 0, 0, [], 0, 0)
 
             Color(1, 0, 0)
-            for e in maze.edges:
+            for e in self.maze.edges:
                 u, v, w = e.u, e.v, e.w
                 #if(rand.randint(0, 100) < 50): Color(w+4, 0, 0)
                 #else: Color(0, w+4, 0)
                 Color(1, 0, 0)
 
                 #Gui commented!!!
-                #Line(points=(u.pos_x*wall_x, u.pos_y*wall_y, v.pos_x*wall_x, v.pos_y*wall_y), width = 4)
+                Line(points=(u.pos_x*wall_x, u.pos_y*wall_y, v.pos_x*wall_x, v.pos_y*wall_y), width = 4)
 
         with self.canvas.before:
             pass
@@ -70,7 +73,7 @@ class Maze(Widget):
         self.initialize_player()
 
 
-        a = maze.check_edge(self.p1)
+        a = self.maze.check_edge(self.p1)
         """print(a)
         print(self.p1.pos_x)
         print(self.p1.pos_y)"""
@@ -94,7 +97,6 @@ class Maze(Widget):
     def pc_player(self, dt):
         with self.canvas:
             global num_it
-            global maze
 
             if self.finished: return    #maze was finished stop execution
             #overwriting old position with blank
@@ -104,13 +106,13 @@ class Maze(Widget):
             else:
                 Color(0, 0, 0)
                 #Gui commented!!!
-                #self.draw_player(G.Vertex(self.p1.old_x, self.p1.old_y))
+                self.draw_player(G.Vertex(self.p1.old_x, self.p1.old_y))
                 self.p1.old_x, self.p1.old_y = self.p1.pos_x, self.p1.pos_y
 
 
             Color(0, 0, 1)
             #Gui commented !!!
-            #self.draw_player(G.Vertex(self.p1.pos_x, self.p1.pos_y))
+            self.draw_player(G.Vertex(self.p1.pos_x, self.p1.pos_y))
             
             #call walk function
             self.pc_dfs_walk ()
@@ -122,7 +124,7 @@ class Maze(Widget):
                 self.finished = True
                 print(self.count)
                 c_temp = self.count
-
+                
                 num_it -= 1
                 if num_it > 0:
                     #reset some variables
@@ -132,8 +134,12 @@ class Maze(Widget):
 
                     self.visited.clear()
                     self.stack.clear()
+
                     #create a new maze
-                    maze = G.Graph(size)
+                    
+
+                    self.maze = G.Graph(size)
+                    #maze.print_edges()
                     #initialze player again to starting position
                     self.initialize_player()
             
@@ -141,7 +147,7 @@ class Maze(Widget):
     
     def pc_random_walk (self):
         #trying out movement with check_edge function for random player with no memory
-            a = maze.check_edge(self.p1)
+            a = self.maze.check_edge(self.p1)
 
             directions = []     #saves possible current directions  0 = up, 1 = right, 2 = bottom, 3 = left
             for i in range(0, 4):
@@ -153,12 +159,10 @@ class Maze(Widget):
             elif directions[r] == 2: self.p1.pos_y-=1
             else: self.p1.pos_x-=1
     
-    visited = []
-    stack = []
     
     #traversing labyrinth in dfs fashion
     def pc_dfs_walk (self) :
-        a = maze.check_edge(self.p1)
+        a = self.maze.check_edge(self.p1)
         
         self.visited.append([self.p1.pos_x, self.p1.pos_y])
         top_neighbor = [self.p1.pos_x, self.p1.pos_y + 1]
@@ -201,7 +205,7 @@ class Maze(Widget):
 class MazeApp(App):
     def build(self):
         simulation = Maze()
-        Clock.schedule_interval(simulation.pc_player, 0.2)
+        Clock.schedule_interval(simulation.pc_player, 0.1)
         return simulation
 
 if __name__ == '__main__':
