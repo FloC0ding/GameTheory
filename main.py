@@ -36,15 +36,15 @@ wall_y = height/(n)
 p_size = 10
 
 num_it = 15
-c_temp = 0
+c_temp = []
 
 class SimGame(Widget):
     pass
 
 class Maze(Widget):
 
-    visited = []
-    stack = []
+    #visited = []
+    #stack = []
 
     def __init__(self, **kwargs):
         super(Maze, self).__init__(**kwargs)
@@ -54,6 +54,9 @@ class Maze(Widget):
             self.start = False
             self.finished = False
             self.p1 = A.Agent(-1, -1, -1, -1, 0, 0, [], 0, 0)
+            self.visited = []
+            self.stack = []
+
 
             Color(1, 0, 0)
             for e in self.maze.edges:
@@ -122,8 +125,8 @@ class Maze(Widget):
             #check if maze was finished
             if not(0 <= self.p1.pos_x < n and 0 <= self.p1.pos_y < n):
                 self.finished = True
-                print(self.count)
-                c_temp = self.count
+                #print(self.count)
+                c_temp.append(self.count)
                 
                 num_it -= 1
                 if num_it > 0:
@@ -142,7 +145,10 @@ class Maze(Widget):
                     #maze.print_edges()
                     #initialze player again to starting position
                     self.initialize_player()
-            
+                else:
+                    pass
+                    #print(c_temp)
+
 
     
     def pc_random_walk (self):
@@ -205,7 +211,7 @@ class Maze(Widget):
 class MazeApp(App):
     def build(self):
         simulation = Maze()
-        Clock.schedule_interval(simulation.pc_player, 0.1)
+        Clock.schedule_interval(simulation.pc_player, 0.01)
         return simulation
 
 if __name__ == '__main__':
