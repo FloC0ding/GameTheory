@@ -102,9 +102,15 @@ class Maze(Widget):
 
             Color(0, 0, 1)
             self.draw_player(G.Vertex(self.p1.pos_x, self.p1.pos_y))
+            
+            #call walk function
+            self.pc_dfs_walk ()
+            
+            
 
-
-            #trying out movement with check_edge function for random player with no memory
+    
+    def pc_random_walk (self):
+        #trying out movement with check_edge function for random player with no memory
             a = maze.check_edge(self.p1)
 
             directions = []     #saves possible current directions  0 = up, 1 = right, 2 = bottom, 3 = left
@@ -116,6 +122,39 @@ class Maze(Widget):
             elif directions[r] == 1: self.p1.pos_x+=1
             elif directions[r] == 2: self.p1.pos_y-=1
             else: self.p1.pos_x-=1
+    
+    visited = []
+    stack = []
+    
+    #traversing labyrinth in dfs fashion
+    def pc_dfs_walk (self) :
+        a = maze.check_edge(self.p1)
+        
+        self.visited.append([self.p1.pos_x, self.p1.pos_y])
+        top_neighbor = [self.p1.pos_x, self.p1.pos_y + 1]
+        right_neighbor = [self.p1.pos_x + 1, self.p1.pos_y]
+        bottom_neighbor = [self.p1.pos_x, self.p1.pos_y - 1]       
+        left_neighbor = [self.p1.pos_x - 1, self.p1.pos_y]
+        
+        if a[0] and top_neighbor not in self.visited:
+            self.stack.append([self.p1.pos_x, self.p1.pos_y])
+            self.p1.pos_y+=1
+        elif a[1] and right_neighbor not in self.visited:
+            self.stack.append([self.p1.pos_x, self.p1.pos_y])
+            self.p1.pos_x+=1
+        elif a[2] and bottom_neighbor not in self.visited:
+            self.stack.append([self.p1.pos_x, self.p1.pos_y])
+            self.p1.pos_y-=1
+        elif a[3] and left_neighbor not in self.visited:
+            self.stack.append([self.p1.pos_x, self.p1.pos_y])
+            self.p1.pos_x-=1
+        else:
+            pos = self.stack.pop()
+            self.p1.pos_x = pos[0]
+            self.p1.pos_y = pos[1]
+        
+        
+        
 
 
 
@@ -132,7 +171,7 @@ class Maze(Widget):
 class MazeApp(App):
     def build(self):
         simulation = Maze()
-        Clock.schedule_interval(simulation.pc_player, 0.1)
+        Clock.schedule_interval(simulation.pc_player, 0.2)
         return simulation
 
 
