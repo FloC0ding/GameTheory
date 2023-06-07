@@ -126,7 +126,7 @@ class Graph:
             
             if notSame_zhk(u, v, F):
                 
-
+                
                 #delete u and merge into v
                 mst_edges.append(Edge(u, v, w))
                 #adding symmetric edges not necessary to draw maze      (maybe remove for efficiency)

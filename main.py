@@ -75,9 +75,9 @@ class Maze(Widget):
         print
 
         a = maze.check_edge(self.p1)
-        print(a)
+        """print(a)
         print(self.p1.pos_x)
-        print(self.p1.pos_y)
+        print(self.p1.pos_y)"""
         
         #self.player = Agent(rand.randint(0,size), rand.randint(0,size), 0, 0, 0)
 
