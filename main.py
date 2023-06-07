@@ -21,7 +21,7 @@ import random as rand
 
 
 
-size = 6       #35 still reasonably fast
+size = 5       #35 still reasonably fast
 n = size-1      #number of fields of the labyrinth per row or line
 
 width = Window.size[0]
@@ -35,14 +35,14 @@ maze = G.Graph(size)
 #player
 p_size = 10
 
-
-
+num_it = 10
+c_temp = 0
 
 class SimGame(Widget):
     pass
 
 class Maze(Widget):
-
+    global maze
     start = False
     finished = False
     p1 = A.Agent(-1, -1, -1, -1, 0, 0, [], 0, 0)
@@ -59,20 +59,15 @@ class Maze(Widget):
                 #else: Color(0, w+4, 0)
                 Color(1, 0, 0)
 
-                Line(points=(u.pos_x*wall_x, u.pos_y*wall_y, v.pos_x*wall_x, v.pos_y*wall_y), width = 4)
+                #Gui commented!!!
+                #Line(points=(u.pos_x*wall_x, u.pos_y*wall_y, v.pos_x*wall_x, v.pos_y*wall_y), width = 4)
 
         with self.canvas.before:
             pass
         with self.canvas.after:
             pass
 
-        #initialize p1 position
-        if n % 2 == 0:
-            self.p1.pos_x = (n+1)/2
-            self.p1.pos_y = (n+1)/2
-        else :
-            self.p1.pos_x = n/2
-            self.p1.pos_y = n/2
+        self.initialize_player()
 
 
         a = maze.check_edge(self.p1)
@@ -82,6 +77,14 @@ class Maze(Widget):
         
         #self.player = Agent(rand.randint(0,size), rand.randint(0,size), 0, 0, 0)
 
+    def initialize_player(self):
+         #initialize p1 position
+        if n % 2 == 0:
+            self.p1.pos_x = (n+1)/2
+            self.p1.pos_y = (n+1)/2
+        else :
+            self.p1.pos_x = n/2
+            self.p1.pos_y = n/2
     
     
     def update(self, dt):
@@ -90,20 +93,24 @@ class Maze(Widget):
 
     def pc_player(self, dt):
         with self.canvas:
-            if self.finished: return    #maze was finished stop execution
+            global num_it
+            global maze
 
+            if self.finished: return    #maze was finished stop execution
             #overwriting old position with blank
             if not self.start:
                 self.start = True
                 self.p1.old_x, self.p1.old_y = self.p1.pos_x, self.p1.pos_y
             else:
                 Color(0, 0, 0)
-                self.draw_player(G.Vertex(self.p1.old_x, self.p1.old_y))
+                #Gui commented!!!
+                #self.draw_player(G.Vertex(self.p1.old_x, self.p1.old_y))
                 self.p1.old_x, self.p1.old_y = self.p1.pos_x, self.p1.pos_y
 
 
             Color(0, 0, 1)
-            self.draw_player(G.Vertex(self.p1.pos_x, self.p1.pos_y))
+            #Gui commented !!!
+            #self.draw_player(G.Vertex(self.p1.pos_x, self.p1.pos_y))
             
             #call walk function
             self.pc_dfs_walk ()
@@ -114,9 +121,21 @@ class Maze(Widget):
             if not(0 <= self.p1.pos_x < n and 0 <= self.p1.pos_y < n):
                 self.finished = True
                 print(self.count)
+                c_temp = self.count
 
+                num_it -= 1
+                if num_it > 0:
+                    #reset some variables
+                    self.count = 0
+                    self.start = False
+                    self.finished = False
 
-            
+                    self.visited.clear()
+                    self.stack.clear()
+                    #create a new maze
+                    maze = G.Graph(size)
+                    #initialze player again to starting position
+                    self.initialize_player()
             
 
     
@@ -185,9 +204,10 @@ class MazeApp(App):
         Clock.schedule_interval(simulation.pc_player, 0.2)
         return simulation
 
-
 if __name__ == '__main__':
     MazeApp().run()
+
+        
 
 
 
