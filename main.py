@@ -43,7 +43,8 @@ p_size = 10
 
 #simulation settings
 update_speed = 0.000001  #number of seconds for which the update function is called
-num_it = 20
+num_it = 1000
+iterations = num_it
 c_temp = []
 new_maze_perIt = False
 gui = True
@@ -287,7 +288,7 @@ path = "C:/Users/"+getpass.getuser()+"/git/Game Theory/Maze_Measuring_Data/"
 #coop and non coop has to be added
 #Format: maze_size, same_maze, num_it, (strategy), (coop), time
 #bracket attributes have to be added
-name = str(n)+"_"+str(new_maze_perIt)+"_"+str(num_it)+"_"+str(seconds)+".txt"
+name = str(n)+"_"+str(new_maze_perIt)+"_"+str(iterations-num_it)+"_"+str(seconds)+".txt"
 name = path+name
 file = open(name, "w")
 
@@ -299,7 +300,7 @@ file.close()
 #
 
 
-counter = Counter(c_temp)
+"""counter = Counter(c_temp)
 values = list(counter.keys())
 frequencies = list(counter.values())
 
@@ -316,7 +317,7 @@ plt.ylabel('Frequency')
 plt.title('Value Frequency Bar Graph')
 
 # Display the bar graph
-plt.show()   
+plt.show()   """
 
 
 
