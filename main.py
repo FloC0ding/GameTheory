@@ -166,6 +166,9 @@ class Maze(Widget):
 
         self.pc_dfs_walk()
         return True
+    
+        
+        
 
         
     
@@ -211,8 +214,8 @@ class Maze(Widget):
             self.p1.pos_x = pos[0]
             self.p1.pos_y = pos[1]
     
-    def pc_dfs_random_walk(self):
-        a = self.maze.check_edge(self.p1)
+    def pc_dfs_random_walk(self, player):
+        a = self.maze.check_edge(player.p1)
         self.visited.append([self.p1.pos_x, self.p1.pos_y])
 
         neighbours = []
