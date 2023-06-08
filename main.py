@@ -43,7 +43,7 @@ p_size = 10
 
 #simulation settings
 update_speed = 0.000001  #number of seconds for which the update function is called
-num_it = 1000
+num_it = 100
 iterations = num_it
 c_temp = []
 new_maze_perIt = False
@@ -90,13 +90,16 @@ class Maze(Widget):
             self.p1.pos_x = n/2
             self.p1.pos_y = n/2
     
+    def initialize_player_random(self, p):
+        pass
+
     def pc_cooperative(self, dt):
         global num_it
 
         if self.pc_count_min_steps(self.p1):   pass
         else: 
             #reset variables implement probably reset function
-            print(len(self.stack))
+            print(str(len(self.stack))+"!!!!!")
             
 
     def pc_player(self, dt):
@@ -121,8 +124,8 @@ class Maze(Widget):
             if gui: self.draw_player(G.Vertex(self.p1.pos_x, self.p1.pos_y))
             
             #call walk function
-            self.pc_dfs_random_walk()
-            #self.pc_dfs_walk ()
+            self.pc_dfs_random_walk(self.p1)
+            #self.pc_dfs_walk (self.p1)
 
             #draw visited fields
 
@@ -164,11 +167,8 @@ class Maze(Widget):
     def pc_count_min_steps(self, p):
         if self.player_out_of_bound(self.p1): return False
 
-        self.pc_dfs_walk()
+        self.pc_dfs_walk(p)
         return True
-    
-        
-        
 
         
     
@@ -188,42 +188,42 @@ class Maze(Widget):
     
     
     #traversing labyrinth in dfs fashion
-    def pc_dfs_walk (self) :
-        a = self.maze.check_edge(self.p1)
+    def pc_dfs_walk (self, p) :
+        a = self.maze.check_edge(p)
         
-        self.visited.append([self.p1.pos_x, self.p1.pos_y])
-        top_neighbor = [self.p1.pos_x, self.p1.pos_y + 1]
-        right_neighbor = [self.p1.pos_x + 1, self.p1.pos_y]
-        bottom_neighbor = [self.p1.pos_x, self.p1.pos_y - 1]       
-        left_neighbor = [self.p1.pos_x - 1, self.p1.pos_y]
+        self.visited.append([p.pos_x, p.pos_y])
+        top_neighbor = [p.pos_x, p.pos_y + 1]
+        right_neighbor = [p.pos_x + 1, p.pos_y]
+        bottom_neighbor = [p.pos_x, p.pos_y - 1]       
+        left_neighbor = [p.pos_x - 1, p.pos_y]
         
         if a[0] and top_neighbor not in self.visited:
-            self.stack.append([self.p1.pos_x, self.p1.pos_y])
-            self.p1.pos_y+=1
+            self.stack.append([p.pos_x, p.pos_y])
+            p.pos_y+=1
         elif a[1] and right_neighbor not in self.visited:
-            self.stack.append([self.p1.pos_x, self.p1.pos_y])
-            self.p1.pos_x+=1
+            self.stack.append([p.pos_x, p.pos_y])
+            p.pos_x+=1
         elif a[2] and bottom_neighbor not in self.visited:
-            self.stack.append([self.p1.pos_x, self.p1.pos_y])
-            self.p1.pos_y-=1
+            self.stack.append([p.pos_x, p.pos_y])
+            p.pos_y-=1
         elif a[3] and left_neighbor not in self.visited:
-            self.stack.append([self.p1.pos_x, self.p1.pos_y])
-            self.p1.pos_x-=1
+            self.stack.append([p.pos_x, p.pos_y])
+            p.pos_x-=1
         else:
             pos = self.stack.pop()
-            self.p1.pos_x = pos[0]
-            self.p1.pos_y = pos[1]
+            p.pos_x = pos[0]
+            p.pos_y = pos[1]
     
-    def pc_dfs_random_walk(self, player):
-        a = self.maze.check_edge(player.p1)
-        self.visited.append([self.p1.pos_x, self.p1.pos_y])
+    def pc_dfs_random_walk(self, p):
+        a = self.maze.check_edge(p)
+        self.visited.append([p.pos_x, p.pos_y])
 
         neighbours = []
         
-        neighbours.append([self.p1.pos_x, self.p1.pos_y + 1])
-        neighbours.append([self.p1.pos_x + 1, self.p1.pos_y])
-        neighbours.append([self.p1.pos_x, self.p1.pos_y - 1])       
-        neighbours.append([self.p1.pos_x - 1, self.p1.pos_y])
+        neighbours.append([p.pos_x, p.pos_y + 1])
+        neighbours.append([p.pos_x + 1, p.pos_y])
+        neighbours.append([p.pos_x, p.pos_y - 1])       
+        neighbours.append([p.pos_x - 1, p.pos_y])
         
         directions = []     #saves possible current directions  0 = up, 1 = right, 2 = bottom, 3 = left
         for i in range(0, 4):
@@ -232,27 +232,27 @@ class Maze(Widget):
 
         if len(directions) == 0: 
             pos = self.stack.pop()
-            self.p1.pos_x = pos[0]
-            self.p1.pos_y = pos[1]
+            p.pos_x = pos[0]
+            p.pos_y = pos[1]
             return
 
         r = rand.randint(0, len(directions) - 1)
         if directions[r] == 0:
-            self.stack.append([self.p1.pos_x, self.p1.pos_y])
-            self.p1.pos_y+=1
+            self.stack.append([p.pos_x, p.pos_y])
+            p.pos_y+=1
         elif directions[r] == 1: 
-            self.stack.append([self.p1.pos_x, self.p1.pos_y])
-            self.p1.pos_x+=1
+            self.stack.append([p.pos_x, p.pos_y])
+            p.pos_x+=1
         elif directions[r] == 2: 
-            self.stack.append([self.p1.pos_x, self.p1.pos_y])
-            self.p1.pos_y-=1
+            self.stack.append([p.pos_x, p.pos_y])
+            p.pos_y-=1
         elif directions[r] == 3: 
-            self.stack.append([self.p1.pos_x, self.p1.pos_y])
-            self.p1.pos_x-=1
+            self.stack.append([p.pos_x, p.pos_y])
+            p.pos_x-=1
         else: 
             pos = self.stack.pop()
-            self.p1.pos_x = pos[0]
-            self.p1.pos_y = pos[1]
+            p.pos_x = pos[0]
+            p.pos_y = pos[1]
 
 
 
