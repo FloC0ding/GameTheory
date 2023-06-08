@@ -55,13 +55,6 @@ def helper2(v, F):
                 return i
 
 class Graph:
-    #vertices = set()
-    #edges = []
-
-    #maps verticex a to an array of vertices that are neighbours vertex a
-    #neighbour_edges = {}
-    
-    #maybe add edges in format where each vertex saves it's neighbours (dictionary)
 
     def __init__(self, n):
         self.vertices = set()
