@@ -1,5 +1,8 @@
+#imports from own files
 import graph as G
 import agents as A
+
+#import from matplotlib and kivy
 import matplotlib.pyplot as plt
 from collections import Counter
 
@@ -19,11 +22,13 @@ from kivy.properties import (
 )
 from kivy.vector import Vector
 
+#python imports
 import random as rand
+import time
+import getpass
 
 
-
-size = 10       #35 still reasonably fast
+size = 6        #35 still reasonably fast(creating maze)
 n = size-1      #number of fields of the labyrinth per row or line
 
 width = Window.size[0]
@@ -32,16 +37,19 @@ height = Window.size[1]
 wall_x = width/(n)
 wall_y = height/(n)
 
-#maze = G.Graph(size)
 
 #player
 p_size = 10
 
 #simulation settings
-update_speed = 0.0000001  #number of seconds for which the update function is called
-num_it = 10000
+update_speed = 0.000001  #number of seconds for which the update function is called
+num_it = 20
 c_temp = []
 new_maze_perIt = False
+gui = True
+
+#cooperative parameters
+solve_maze_step = 0
 
 
 class SimGame(Widget):
@@ -53,22 +61,20 @@ class Maze(Widget):
 
     def __init__(self, **kwargs):
         super(Maze, self).__init__(**kwargs)
-        with self.canvas:
-            #initialize variables
-            self.maze = G.Graph(size) 
-            self.count = 0
-            self.start = False
-            self.finished = False
-            self.p1 = A.Agent(-1, -1, -1, -1, 0, 0, [], 0, 0)
-            self.visited = []
-            self.stack = []
 
-            self.draw_maze()
+        #initialize variables
+        self.maze = G.Graph(size) 
+        self.count = 0
+        self.start = False
+        self.finished = False
+        self.p1 = A.Agent(-1, -1, -1, -1, 0, 0, [], 0, 0)
+        self.visited = []
+        self.stack = []
+        
+        self.draw_maze()
 
-        with self.canvas.before:
-            pass
-        with self.canvas.after:
-            pass
+        #implement cooperative game mode
+        self.players = []
 
         self.initialize_player()
         
@@ -83,10 +89,19 @@ class Maze(Widget):
             self.p1.pos_x = n/2
             self.p1.pos_y = n/2
     
+    def pc_cooperative(self, dt):
+        global num_it
+
+        if self.pc_count_min_steps(self.p1):   pass
+        else: 
+            #reset variables implement probably reset function
+            print(len(self.stack))
+            
 
     def pc_player(self, dt):
         with self.canvas:
             global num_it
+
 
             if self.finished: return    #maze was finished stop execution
             #overwriting old position with blank
@@ -96,13 +111,13 @@ class Maze(Widget):
             else:
                 Color(0, 0, 0)
                 #Gui draw instruction
-                self.draw_player(G.Vertex(self.p1.old_x, self.p1.old_y))
+                if gui: self.draw_player(G.Vertex(self.p1.old_x, self.p1.old_y))
                 self.p1.old_x, self.p1.old_y = self.p1.pos_x, self.p1.pos_y
 
 
             Color(0, 0, 1)
             #Gui draw instruction
-            self.draw_player(G.Vertex(self.p1.pos_x, self.p1.pos_y))
+            if gui: self.draw_player(G.Vertex(self.p1.pos_x, self.p1.pos_y))
             
             #call walk function
             self.pc_dfs_random_walk()
@@ -114,7 +129,7 @@ class Maze(Widget):
             self.count += 1
 
             #check if maze was finished
-            if not(0 <= self.p1.pos_x < n and 0 <= self.p1.pos_y < n):
+            if self.player_out_of_bound(self.p1):
                 self.finished = True
                 #print(self.count)
                 c_temp.append(self.count)
@@ -127,28 +142,31 @@ class Maze(Widget):
                     self.finished = False
 
                     self.visited.clear()
-                    self.stack.clear()
-
-                    
+                    self.stack.clear()                    
 
                     #create a new maze
-                    Color(0, 0, 0)
                     if new_maze_perIt: 
                         self.maze = G.Graph(size)
+                        Color(0, 0, 0)
                         with self.canvas:
                             #Gui draw instruction
-                            Rectangle(points=(0, 0), size=(width, height))
+                            if gui: Rectangle(points=(0, 0), size=(width, height))
                         self.draw_maze()
                     #Gui draw instruction
-                    self.draw_player(self.p1)
+                    if gui: self.draw_player(self.p1)
                     #initialze player again to starting position
                     self.initialize_player()
 
-                else:
-                    pass
-                    #print(c_temp)
+    def player_out_of_bound(self, p):
+        return not(0 <= p.pos_x < n and 0 <= p.pos_y < n)
 
+    def pc_count_min_steps(self, p):
+        if self.player_out_of_bound(self.p1): return False
 
+        self.pc_dfs_walk()
+        return True
+
+        
     
     def pc_random_walk (self):
         #trying out movement with check_edge function for random player with no memory
@@ -236,11 +254,12 @@ class Maze(Widget):
 
     #draws p1 at his current position, needs to be changed to accept an Agent object and draw this object
     def draw_maze(self):
-        for e in self.maze.edges:
-                u, v, w = e.u, e.v, e.w
-                Color(1, 0, 0)
-                #Gui draw instruction
-                Line(points=(u.pos_x*wall_x, u.pos_y*wall_y, v.pos_x*wall_x, v.pos_y*wall_y), width = 4)
+        with self.canvas:
+            for e in self.maze.edges:
+                    u, v, w = e.u, e.v, e.w
+                    Color(1, 0, 0)
+                    #Gui draw instruction
+                    if gui: Line(points=(u.pos_x*wall_x, u.pos_y*wall_y, v.pos_x*wall_x, v.pos_y*wall_y), width = 4)
 
     def draw_player(self):
         with self.canvas:
@@ -253,13 +272,32 @@ class Maze(Widget):
 class MazeApp(App):
     def build(self):
         simulation = Maze()
+        #Clock.schedule_interval(simulation.pc_cooperative, update_speed)        
         Clock.schedule_interval(simulation.pc_player, update_speed)
         return simulation
 
 if __name__ == '__main__':
     MazeApp().run()
 
-print(c_temp)        
+
+#IO write c_temp into text file
+seconds = time.time()
+path = "C:/Users/"+getpass.getuser()+"/git/Game Theory/Maze_Measuring_Data/"
+#strategy has to be added at this point manually
+#coop and non coop has to be added
+#Format: maze_size, same_maze, num_it, (strategy), (coop), time
+#bracket attributes have to be added
+name = str(n)+"_"+str(new_maze_perIt)+"_"+str(num_it)+"_"+str(seconds)+".txt"
+name = path+name
+file = open(name, "w")
+
+for i in c_temp:
+    file.write(str(i)+"\n")
+
+file.close()
+
+#
+
 
 counter = Counter(c_temp)
 values = list(counter.keys())
