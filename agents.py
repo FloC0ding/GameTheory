@@ -24,6 +24,6 @@ class Agent:
         return [self.pos_x, self.pos_y]
         
     def pass_message(self, agent):
-        self.visited_collab.append(self.visited)
-        self.stack_collab.append(self.stack)    
+        self.visited_collab.extend(self.visited)
+        self.stack_collab.extend(self.stack)    
     
