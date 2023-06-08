@@ -91,7 +91,7 @@ class Maze(Widget):
             self.p1.pos_y = n/2
     
     def initialize_player_random(self, p):
-        
+        pass
 
     def pc_cooperative(self, dt):
         global num_it
