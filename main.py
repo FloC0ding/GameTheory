@@ -253,6 +253,62 @@ class Maze(Widget):
             pos = self.stack.pop()
             p.pos_x = pos[0]
             p.pos_y = pos[1]
+    
+    def player_located (self, pos):
+        for p in self.players:
+            if [p.pos_x, p.pos_y] == pos:
+                return p
+        return None    
+    
+    def pc_cooperative_dfs_random_walk(self, p):
+        
+        a = self.maze.check_edge(p)
+        self.visited.append([p.pos_x, p.pos_y])
+
+        neighbours = []
+        
+        neighbours.append([p.pos_x, p.pos_y + 1])
+        neighbours.append([p.pos_x + 1, p.pos_y])
+        neighbours.append([p.pos_x, p.pos_y - 1])       
+        neighbours.append([p.pos_x - 1, p.pos_y])
+        
+        directions = []     #saves possible current directions  0 = up, 1 = right, 2 = bottom, 3 = left
+        for i in range(0, 4):
+            if a[i] and neighbours[i] not in self.visited: directions.append(i)
+            
+        if directions[0] and self.player_located([p.pos_x, p.pos_y+1]):
+            p.pass_message(self.player_located([p.pos_x, p.pos_y+1]))
+        if directions[1] and self.player_located([p.pos_x+1, p.pos_y]):
+            p.pass_message(self.player_located([p.pos_x+1, p.pos_y]))
+        if directions[0] and self.player_located([p.pos_x, p.pos_y-1]):
+            p.pass_message(self.player_located([p.pos_x, p.pos_y-1]))
+        if directions[0] and self.player_located([p.pos_x-1, p.pos_y]):
+            p.pass_message(self.player_located([p.pos_x-1, p.pos_y]))
+
+
+        if len(directions) == 0: 
+            pos = self.stack.pop()
+            p.pos_x = pos[0]
+            p.pos_y = pos[1]
+            return
+
+        r = rand.randint(0, len(directions) - 1)
+        if directions[r] == 0:
+            self.stack.append([p.pos_x, p.pos_y])
+            p.pos_y+=1
+        elif directions[r] == 1: 
+            self.stack.append([p.pos_x, p.pos_y])
+            p.pos_x+=1
+        elif directions[r] == 2: 
+            self.stack.append([p.pos_x, p.pos_y])
+            p.pos_y-=1
+        elif directions[r] == 3: 
+            self.stack.append([p.pos_x, p.pos_y])
+            p.pos_x-=1
+        else: 
+            pos = self.stack.pop()
+            p.pos_x = pos[0]
+            p.pos_y = pos[1]
 
 
 
