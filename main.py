@@ -91,7 +91,9 @@ class Maze(Widget):
             self.p1.pos_y = n/2
     
     def initialize_player_random(self, p):
-        pass
+        p.pos_x = rand.randint(0, n-1) + 0.5
+        p.pos_y = rand.randint(0, n-1) + 0.5
+
 
     def pc_cooperative(self, dt):
         global num_it
@@ -159,7 +161,7 @@ class Maze(Widget):
                     #Gui draw instruction
                     if gui: self.draw_player(self.p1)
                     #initialze player again to starting position
-                    self.initialize_player()
+                    self.initialize_player_random(self.p1)
 
     def player_out_of_bound(self, p):
         return not(0 <= p.pos_x < n and 0 <= p.pos_y < n)
@@ -341,6 +343,12 @@ if __name__ == '__main__':
 
 
 #IO write c_temp into text file
+output = {}
+for i in c_temp:
+    if i not in output: output[i] = 1
+    else: output[i] += 1
+
+
 seconds = time.time()
 path = "C:/Users/"+getpass.getuser()+"/git/Game Theory/Maze_Measuring_Data/"
 #strategy has to be added at this point manually
@@ -351,8 +359,8 @@ name = str(n)+"_"+str(new_maze_perIt)+"_"+str(iterations-num_it)+"_"+str(seconds
 name = path+name
 file = open(name, "w")
 
-for i in c_temp:
-    file.write(str(i)+"\n")
+for i in output:
+    file.write(str(i)+" "+str(output[i])+"\n")
 
 file.close()
 
