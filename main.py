@@ -28,7 +28,7 @@ import time
 import getpass
 
 
-size = 6        #35 still reasonably fast(creating maze)
+size = 16        #35 still reasonably fast(creating maze)
 n = size-1      #number of fields of the labyrinth per row or line
 
 width = Window.size[0]
@@ -43,14 +43,16 @@ p_size = 10
 
 #simulation settings
 update_speed = 0.000001  #number of seconds for which the update function is called
-num_it = 100
+num_it = 1000
 iterations = num_it
 c_temp = []
 new_maze_perIt = False
-gui = True
+gui = False
 
-#cooperative parameters
+#counts the minimal number of steps to escape works only for same_maze
 solve_maze_step = 0
+#cooperative parameters
+num_players = 10
 
 
 class SimGame(Widget):
@@ -65,30 +67,34 @@ class Maze(Widget):
 
         #initialize variables
         self.maze = G.Graph(size) 
-        self.count = 0
         self.start = False
         self.finished = False
+        self.draw_maze()
+        #initialize variables non_coop
+        self.count = 0
         self.p1 = A.Agent(-1, -1, -1, -1, 0, 0, [], 0, 0)
         self.visited = []
         self.stack = []
         
-        self.draw_maze()
+        self.initialize_player(self.p1)
 
         #implement cooperative game mode
         self.players = []
+        for i in range(0, num_players):
+            p = A.Agent(-1, -1, -1, -1, 0, 0, [], 0, 0)
+            self.players.append(p)
+            self.initialize_player_random(p)
+            
 
-        self.initialize_player()
-        
-        #self.player = Agent(rand.randint(0,size), rand.randint(0,size), 0, 0, 0)
 
-    def initialize_player(self):
+    def initialize_player(self, p):
          #initialize p1 position
         if n % 2 == 0:
-            self.p1.pos_x = (n+1)/2
-            self.p1.pos_y = (n+1)/2
+            p.pos_x = (n+1)/2
+            p.pos_y = (n+1)/2
         else :
-            self.p1.pos_x = n/2
-            self.p1.pos_y = n/2
+            p.pos_x = n/2
+            p.pos_y = n/2
     
     def initialize_player_random(self, p):
         p.pos_x = rand.randint(0, n-1) + 0.5
@@ -98,15 +104,40 @@ class Maze(Widget):
     def pc_cooperative(self, dt):
         global num_it
 
-        if self.pc_count_min_steps(self.p1):   pass
+        #update old position of players and overdraw them if necessary
+        if self.start:
+            with self.canvas:
+                Color(0, 0, 0)
+            if gui:
+                for p in self.players:
+                    #self.draw_player(p)
+                    p.old_x, p.old_y = p.pos_x, p.pos_y
         else: 
-            #reset variables implement probably reset function
-            print(str(len(self.stack))+"!!!!!")
-            
+            self.start = True
+            for p in self.players:
+                p.old_x, p.old_y = p.pos_x, p.pos_y
+
+        #draw players
+        if gui: 
+            with self.canvas:
+                Color(1, 0, 1)
+            for p in self.players:
+                self.draw_player(p)
+
+        #check if players have met each other and if yes if they collaborate
+        #TODO
+
+
+
+        #update player positions
+        for p in self.players:
+            self.pc_dfs_random_walk(p)
+
 
     def pc_player(self, dt):
         with self.canvas:
             global num_it
+            global solve_maze_step
 
 
             if self.finished: return    #maze was finished stop execution
@@ -140,6 +171,9 @@ class Maze(Widget):
                 #print(self.count)
                 c_temp.append(self.count)
                 
+                if num_it % 100 == 0:
+                    print(num_it)
+
                 num_it -= 1
                 if num_it > 0:
                     #reset some variables
@@ -161,16 +195,13 @@ class Maze(Widget):
                     #Gui draw instruction
                     if gui: self.draw_player(self.p1)
                     #initialze player again to starting position
-                    self.initialize_player_random(self.p1)
+                    self.initialize_player(self.p1)
+                    #self.initialize_player_random(self.p1)
+                else: solve_maze_step =len(self.stack)
 
     def player_out_of_bound(self, p):
         return not(0 <= p.pos_x < n and 0 <= p.pos_y < n)
 
-    def pc_count_min_steps(self, p):
-        if self.player_out_of_bound(self.p1): return False
-
-        self.pc_dfs_walk(p)
-        return True
 
         
     
@@ -358,9 +389,10 @@ path = "C:/Users/"+getpass.getuser()+"/git/Game Theory/Maze_Measuring_Data/"
 name = str(n)+"_"+str(new_maze_perIt)+"_"+str(iterations-num_it)+"_"+str(seconds)+".txt"
 name = path+name
 file = open(name, "w")
-
+        
 for i in output:
     file.write(str(i)+" "+str(output[i])+"\n")
+
 
 file.close()
 

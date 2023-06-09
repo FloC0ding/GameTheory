@@ -17,7 +17,6 @@ class Agent:
         self.stack_collab = []
         
         
-        #change position x, y attribute to an vertex attribute and maybe add old position into the agent!!!
             
             
     def get_position (self):
