@@ -28,7 +28,7 @@ import time
 import getpass
 
 
-size = 16        #35 still reasonably fast(creating maze)
+size = 21        #35 still reasonably fast(creating maze)
 n = size-1      #number of fields of the labyrinth per row or line
 
 width = Window.size[0]
@@ -39,20 +39,21 @@ wall_y = height/(n)
 
 
 #player
-p_size = 10
+p_size = 6
 
 #simulation settings
-update_speed = 0.000001  #number of seconds for which the update function is called
+update_speed = 0.25  #number of seconds for which the update function is called
 num_it = 1000
 iterations = num_it
 c_temp = []
 new_maze_perIt = False
-gui = False
+gui = True
 
 #counts the minimal number of steps to escape works only for same_maze
 solve_maze_step = 0
 #cooperative parameters
-num_players = 10
+num_players = 4
+p_outofbound = 0
 
 
 class SimGame(Widget):
@@ -80,8 +81,11 @@ class Maze(Widget):
 
         #implement cooperative game mode
         self.players = []
+        id = 0
         for i in range(0, num_players):
             p = A.Agent(-1, -1, -1, -1, 0, 0, [], 0, 0)
+            p.a_id = id
+            id += 1
             self.players.append(p)
             self.initialize_player_random(p)
             
@@ -103,6 +107,9 @@ class Maze(Widget):
 
     def pc_cooperative(self, dt):
         global num_it
+        global p_outofbound
+
+        if self.finished: return
 
         #update old position of players and overdraw them if necessary
         if self.start:
@@ -110,7 +117,7 @@ class Maze(Widget):
                 Color(0, 0, 0)
             if gui:
                 for p in self.players:
-                    #self.draw_player(p)
+                    self.draw_player(G.Vertex(p.old_x, p.old_y))
                     p.old_x, p.old_y = p.pos_x, p.pos_y
         else: 
             self.start = True
@@ -120,19 +127,52 @@ class Maze(Widget):
         #draw players
         if gui: 
             with self.canvas:
-                Color(1, 0, 1)
+                #add distinct colour for each player
+                r, g, b = rand.uniform(0.5, 1), rand.uniform(0.5, 1), rand.uniform(0.5, 1)
+                Color(r, g, b)
             for p in self.players:
                 self.draw_player(p)
 
         #check if players have met each other and if yes if they collaborate
+        #do this in pc_cooperative_dfs_random_walk
         #TODO
-
+        #mistake where dead branches influence the stack
+        for p in self.players:
+            a = self.maze.check_edge(p)
+            collabs = self.find_collaborator(p, a)
+            for p2 in collabs:
+                #add visited from p to p2 and vice versa if p2 not equal p
+                if p.a_id != p2.a_id:
+                    for pos in p2.dead_ends:
+                        p.dead_ends.add(pos)
+                    for pos in p.dead_ends:
+                        p2.dead_ends.add(pos)
+                    #p.dead_ends.extend(p2.dead_ends)
+                    #p2.dead_ends.extend(p.dead_ends)
 
 
         #update player positions
         for p in self.players:
-            self.pc_dfs_random_walk(p)
+            self.pc_coop_walk(p)
+            #self.pc_dfs_random_walk(p)
+            #add any player that finished the game just now to p_outofbound
+            #and remove those players from self.players
+            if self.player_out_of_bound(p):
+                p_outofbound += 1
+                self.players.remove(p)
+                print("PLAYER FINISHED MAZE ")
+                #print(len(self.players))
 
+
+        
+
+        
+        #check if the game is over and all players escaped
+        if p_outofbound == num_players: 
+            print("FINISHED")
+            self.finished = True
+
+        
 
     def pc_player(self, dt):
         with self.canvas:
@@ -219,7 +259,94 @@ class Maze(Widget):
         elif directions[r] == 2: self.p1.pos_y-=1
         else: self.p1.pos_x-=1
     
-    
+    def pc_coop_walk (self, p):
+        
+        a = self.maze.check_edge(p)
+        p.visited.append([p.pos_x, p.pos_y])
+
+        neighbours = []
+        
+        neighbours.append([p.pos_x, p.pos_y + 1])
+        neighbours.append([p.pos_x + 1, p.pos_y])
+        neighbours.append([p.pos_x, p.pos_y - 1])       
+        neighbours.append([p.pos_x - 1, p.pos_y])
+        
+        directions = []     #saves possible current directions  0 = up, 1 = right, 2 = bottom, 3 = left
+        for i in range(0, 4):
+            if a[i] and neighbours[i] not in p.visited and neighbours[i] not in p.dead_ends : directions.append(i)
+
+
+        if len(directions) == 0: 
+            pos = p.stack.pop()
+            p.pos_x = pos[0]
+            p.pos_y = pos[1]
+            p.dead_ends.add(G.Vertex(p.pos_x, p.pos_y))
+            return
+
+        r = rand.randint(0, len(directions) - 1)
+        if directions[r] == 0:
+            p.stack.append([p.pos_x, p.pos_y])
+            p.pos_y+=1
+        elif directions[r] == 1: 
+            p.stack.append([p.pos_x, p.pos_y])
+            p.pos_x+=1
+        elif directions[r] == 2: 
+            p.stack.append([p.pos_x, p.pos_y])
+            p.pos_y-=1
+        elif directions[r] == 3: 
+            p.stack.append([p.pos_x, p.pos_y])
+            p.pos_x-=1
+        else: 
+            pos = p.stack.pop()
+            p.pos_x = pos[0]
+            p.pos_y = pos[1]
+            p.dead_ends.add(G.Vertex(p.pos_x, p.pos_y))
+
+    #pc coop walk backup  
+    """def pc_coop_walk (self, p):
+        
+        a = self.maze.check_edge(p)
+        p.visited.append([p.pos_x, p.pos_y])
+
+        neighbours = []
+        
+        neighbours.append([p.pos_x, p.pos_y + 1])
+        neighbours.append([p.pos_x + 1, p.pos_y])
+        neighbours.append([p.pos_x, p.pos_y - 1])       
+        neighbours.append([p.pos_x - 1, p.pos_y])
+        
+        directions = []     #saves possible current directions  0 = up, 1 = right, 2 = bottom, 3 = left
+        for i in range(0, 4):
+            if a[i] and neighbours[i] not in p.visited and neighbours[i] not in p.dead_ends : directions.append(i)
+
+
+        if len(directions) == 0: 
+            pos = p.stack.pop()
+            p.pos_x = pos[0]
+            p.pos_y = pos[1]
+            p.dead_ends.add(G.Vertex(p.pos_x, p.pos_y))
+            return
+
+        r = rand.randint(0, len(directions) - 1)
+        if directions[r] == 0:
+            p.stack.append([p.pos_x, p.pos_y])
+            p.pos_y+=1
+        elif directions[r] == 1: 
+            p.stack.append([p.pos_x, p.pos_y])
+            p.pos_x+=1
+        elif directions[r] == 2: 
+            p.stack.append([p.pos_x, p.pos_y])
+            p.pos_y-=1
+        elif directions[r] == 3: 
+            p.stack.append([p.pos_x, p.pos_y])
+            p.pos_x-=1
+        else: 
+            pos = p.stack.pop()
+            p.pos_x = pos[0]
+            p.pos_y = pos[1]
+            p.dead_ends.add(G.Vertex(p.pos_x, p.pos_y))"""
+      
+
     #traversing labyrinth in dfs fashion
     def pc_dfs_walk (self, p) :
         a = self.maze.check_edge(p)
@@ -249,7 +376,7 @@ class Maze(Widget):
     
     def pc_dfs_random_walk(self, p):
         a = self.maze.check_edge(p)
-        self.visited.append([p.pos_x, p.pos_y])
+        p.visited.append([p.pos_x, p.pos_y])
 
         neighbours = []
         
@@ -260,30 +387,30 @@ class Maze(Widget):
         
         directions = []     #saves possible current directions  0 = up, 1 = right, 2 = bottom, 3 = left
         for i in range(0, 4):
-            if a[i] and neighbours[i] not in self.visited: directions.append(i)
+            if a[i] and neighbours[i] not in p.visited: directions.append(i)
 
 
         if len(directions) == 0: 
-            pos = self.stack.pop()
+            pos = p.stack.pop()
             p.pos_x = pos[0]
             p.pos_y = pos[1]
             return
 
         r = rand.randint(0, len(directions) - 1)
         if directions[r] == 0:
-            self.stack.append([p.pos_x, p.pos_y])
+            p.stack.append([p.pos_x, p.pos_y])
             p.pos_y+=1
         elif directions[r] == 1: 
-            self.stack.append([p.pos_x, p.pos_y])
+            p.stack.append([p.pos_x, p.pos_y])
             p.pos_x+=1
         elif directions[r] == 2: 
-            self.stack.append([p.pos_x, p.pos_y])
+            p.stack.append([p.pos_x, p.pos_y])
             p.pos_y-=1
         elif directions[r] == 3: 
-            self.stack.append([p.pos_x, p.pos_y])
+            p.stack.append([p.pos_x, p.pos_y])
             p.pos_x-=1
         else: 
-            pos = self.stack.pop()
+            pos = p.stack.pop()
             p.pos_x = pos[0]
             p.pos_y = pos[1]
     
@@ -343,7 +470,23 @@ class Maze(Widget):
             p.pos_x = pos[0]
             p.pos_y = pos[1]
 
-
+    #if no collaborator found or if the players don't want to collaborate then the p itself is returned
+    def find_collaborator(self, p, a):     
+        collaborators = []
+        for p2 in self.players:
+            for i in range(0, 4):
+                if a[i] == 0 and p.pos_x == p2.pos_x and p.pos_y+1 == p2.pos_y:
+                    #collab possible now check if it actually happens
+                    collaborators.append(p2)
+                elif a[i] == 1 and p.pos_x+1 == p2.pos_x and p.pos_y == p2.pos_y:
+                    collaborators.append(p2)
+                elif a[i] == 2 and p.pos_x == p2.pos_x and p.pos_y-1 == p2.pos_y:
+                    collaborators.append(p2)
+                elif a[i] == 3 and p.pos_x-1 == p2.pos_x and p.pos_y == p2.pos_y:
+                    collaborators.append(p2)
+                elif p.a_id != p2.a_id and p.pos_x == p2.pos_x and p.pos_y == p2.pos_y:
+                    collaborators.append(p2)
+        return collaborators
 
     #draws p1 at his current position, needs to be changed to accept an Agent object and draw this object
     def draw_maze(self):
@@ -365,8 +508,8 @@ class Maze(Widget):
 class MazeApp(App):
     def build(self):
         simulation = Maze()
-        #Clock.schedule_interval(simulation.pc_cooperative, update_speed)        
-        Clock.schedule_interval(simulation.pc_player, update_speed)
+        Clock.schedule_interval(simulation.pc_cooperative, update_speed)        
+        #Clock.schedule_interval(simulation.pc_player, update_speed)
         return simulation
 
 if __name__ == '__main__':
@@ -389,7 +532,7 @@ path = "C:/Users/"+getpass.getuser()+"/git/Game Theory/Maze_Measuring_Data/"
 name = str(n)+"_"+str(new_maze_perIt)+"_"+str(iterations-num_it)+"_"+str(seconds)+".txt"
 name = path+name
 file = open(name, "w")
-        
+
 for i in output:
     file.write(str(i)+" "+str(output[i])+"\n")
 

@@ -6,9 +6,13 @@ class Agent:
         self.pos_y = pos_y
         self.old_x = old_x
         self.old_y = old_y
+
+        self.a_id = 0
+
         self.speed = speed
         self.sight = sight
         self.memory = memory
+
         self.collab_prob = collab_prob
         self.lab = lab
         self.stack = []
@@ -16,6 +20,7 @@ class Agent:
         self.visited_collab = []
         self.stack_collab = []
         
+        self.dead_ends = set()
         
             
             
