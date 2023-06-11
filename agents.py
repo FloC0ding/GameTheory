@@ -9,17 +9,17 @@ class Agent:
 
         self.a_id = 0
 
-        self.speed = speed
-        self.sight = sight
-        self.memory = memory
+        self.count = 0          #each agent counts its own steps
 
-        self.collab_prob = collab_prob
+        """self.speed = speed
+        self.sight = sight
+        self.memory = memory"""
+
+        self.collab_prob = collab_prob  #optional
+
         self.lab = lab
         self.stack = []
-        self.visited = []
-        self.visited_collab = []
-        self.stack_collab = []
-        
+        self.visited = []        
         self.dead_ends = set()
         
             
