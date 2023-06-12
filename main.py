@@ -28,8 +28,8 @@ import time
 import getpass
 
 
-size = 21        #35 still reasonably fast(creating maze)
-n = size-1      #number of fields of the labyrinth per row or line
+n = 20              #number of fields of the labyrinth per row or line
+size = n+1        #35 still reasonably fast(creating maze)
 
 width = Window.size[0]
 height = Window.size[1]
@@ -42,7 +42,7 @@ wall_y = height/(n)
 p_size = 5
 
 #simulation settings
-update_speed = 0.5  #number of seconds for which the update function is called
+update_speed = 0.0005  #number of seconds for which the update function is called
 num_it = 100
 iterations = num_it
 c_temp = []
@@ -54,6 +54,13 @@ solve_maze_step = 0
 #cooperative parameters
 num_players = 1
 p_outofbound = 0
+
+player_type = {
+    "Altruist": 0.001,
+    "Individualistic": 0.05,
+    "Competitive":  0.2
+}
+
 
 
 class SimGame(Widget):
@@ -81,9 +88,10 @@ class Maze(Widget):
 
         #implement cooperative game mode
         self.players = []
+        self.player_storage = []
         id = 0
         for i in range(0, num_players):
-            p = A.Agent(-1, -1, -1, -1, 0, 0, [], 0, 0)
+            p = A.Agent(-1, -1, -1, -1, 1, 0, [], 0, 0)
             p.a_id = id
             id += 1
             self.players.append(p)
@@ -188,6 +196,7 @@ class Maze(Widget):
                 p.visited.clear()
                 p.stack.clear()
 
+                self.player_storage.append(p) 
                 self.players.remove(p)
                 
 
@@ -211,12 +220,10 @@ class Maze(Widget):
                 #no need to delete players from gui (already deleted)
                 #reinstantiate all players
                 id = 0
-                for i in range(0, num_players):
-                    p = A.Agent(-1, -1, -1, -1, 0, 0, [], 0, 0)
-                    p.a_id = id
-                    id += 1
-                    self.players.append(p)
+                self.players.extend(self.player_storage)
+                for p in self.players:
                     self.initialize_player_random(p)
+
                 """if gui: 
                     with self.canvas: 
                         Color(0, 0, 0)

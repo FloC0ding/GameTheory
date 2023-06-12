@@ -1,7 +1,7 @@
 import graph as G
 
 class Agent:
-    def __init__(self, pos_x, pos_y, old_x, old_y, collab_prob, speed, sight, memory, lab):
+    def __init__(self, pos_x, pos_y, old_x, old_y, collab_prob, a_type, sight, memory, lab):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.old_x = old_x
@@ -18,11 +18,14 @@ class Agent:
 
         self.collab_prob = collab_prob  #optional
 
+        self.a_type = a_type
+
         self.collab_cooldown = 0
         self.stack = []
         self.visited = []        
         self.dead_ends = set()
         
+
             
             
     def get_position (self):
