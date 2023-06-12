@@ -42,8 +42,8 @@ wall_y = height/(n)
 p_size = 5
 
 #simulation settings
-update_speed = 0.005  #number of seconds for which the update function is called
-num_it = 1000
+update_speed = 0.000005  #number of seconds for which the update function is called
+num_it = 100
 iterations = num_it
 c_temp = []
 new_maze_perIt = False
@@ -52,7 +52,7 @@ gui = True
 #counts the minimal number of steps to escape works only for same_maze
 solve_maze_step = 0
 #cooperative parameters
-num_players = 10
+num_players = 15
 p_outofbound = 0
 
 
@@ -109,7 +109,7 @@ class Maze(Widget):
         global num_it
         global p_outofbound
 
-        if self.finished: return
+        if self.finished: print("done")
 
         #update old position of players and overdraw them if necessary
         if self.start:
@@ -128,14 +128,14 @@ class Maze(Widget):
         """if gui: 
             for p in self.players:
                 with self.canvas:   Color(0, 1, 1)  #Turqoise
-                for v in p.visited:
-                    self.draw_field(v)
+                #for v in p.visited:
+                #    self.draw_field(v)
                 for v in p.stack:
                     with self.canvas: Color(0, 1, 0)    #Green
                     self.draw_field(v)
-                for v in p.dead_ends:
-                    with self.canvas: Color(0.5, 0.5, 1)    #Purple
-                    self.draw_field(v)"""
+                #for v in p.dead_ends:
+                #    with self.canvas: Color(0.5, 0.5, 1)    #Purple
+                #    self.draw_field(v)"""
 
         #draw players
         if gui: 
@@ -155,16 +155,28 @@ class Maze(Widget):
             collabs = self.find_collaborator(p, a)
             for p2 in collabs:
                 #add visited from p to p2 and vice versa if p2 not equal p
-                if p.a_id != p2.a_id:
+                if p.a_id != p2.a_id and p.collab_cooldown == 0 and p2.collab_cooldown == 0:
+                    p.collab_cooldown = 0   #num_players-5
+                    p.collab_cooldown = 0   #num_players-5
                     for pos in p2.dead_ends:
                         p.dead_ends.add(pos)
                     for pos in p.dead_ends:
                         p2.dead_ends.add(pos)
 
+        #print the stack of each player to debug
+        """for p in self.players:
+            s = ""
+            for v in p.stack:
+                s += "("+str(v.pos_x)+", "+str(v.pos_y)+"), "
+            print(str(p.a_id)+":  ")
+            print(s)
+            print("__________")"""
+
 
         #update player positions
         for p in self.players:
             self.pc_coop_walk(p)
+            if p.collab_cooldown > 0: p.collab_cooldown -= 1
             p.count += 1
             #self.pc_dfs_random_walk(p)
             #add any player that finished the game just now to p_outofbound
@@ -172,7 +184,9 @@ class Maze(Widget):
             if self.player_out_of_bound(p):
                 p_outofbound += 1
                 c_temp.append(p.count)
-                
+                p.visited.clear()
+                p.stack.clear()
+
                 self.players.remove(p)
                 
 
@@ -183,7 +197,7 @@ class Maze(Widget):
         
         #check if the game is over and all players escaped
         if p_outofbound == num_players: 
-            print("FINISHED")
+            #print("FINISHED")
             
             #usefull when programm runs long
             if num_it % 100 == 0:
@@ -191,11 +205,24 @@ class Maze(Widget):
             num_it -= 1
             if num_it > 0:
                 #reset all variables and objects
+                p_outofbound = 0
+                self.start = False
+                #no need to delete players from gui (already deleted)
                 #reinstantiate all players
-                pass
+                id = 0
+                for i in range(0, num_players):
+                    p = A.Agent(-1, -1, -1, -1, 0, 0, [], 0, 0)
+                    p.a_id = id
+                    id += 1
+                    self.players.append(p)
+                    self.initialize_player_random(p)
+                """if gui: 
+                    with self.canvas: 
+                        Color(0, 0, 0)
+                        Rectangle(pos=(0, 0), size=(width, height))
+                    self.draw_maze()"""
 
-
-            self.finished = True
+            else: self.finished = True
 
         
 
@@ -306,12 +333,16 @@ class Maze(Widget):
                 directions.append(i)
 
         if len(directions) == 0: 
+            for i in range(0, 4):
+                if a[i] and neighbours[i] not in p.visited:     
+                    directions.append(i)
             #if len(p.stack) == 0: return
-            pos = p.stack.pop()
-            p.dead_ends.add(G.Vertex(p.pos_x, p.pos_y))
-            p.pos_x = pos.pos_x
-            p.pos_y = pos.pos_y
-            return
+            if len(directions) == 0: 
+                pos = p.stack.pop()
+                p.dead_ends.add(G.Vertex(p.pos_x, p.pos_y))
+                p.pos_x = pos.pos_x
+                p.pos_y = pos.pos_y
+                return
         
 
         r = rand.randint(0, len(directions) - 1)
@@ -328,6 +359,7 @@ class Maze(Widget):
             p.stack.append(G.Vertex(p.pos_x, p.pos_y))
             p.pos_x-=1
         else: 
+            print("test")
             pos = p.stack.pop()
             p.dead_ends.add(G.Vertex(p.pos_x, p.pos_y))
             p.pos_x = pos.pos_x
@@ -509,7 +541,8 @@ if __name__ == '__main__':
 
 
 #IO write c_temp into text file
-"""output = {}
+#
+output = {}
 for i in c_temp:
     if i not in output: output[i] = 1
     else: output[i] += 1
@@ -521,7 +554,7 @@ path = "C:/Users/"+getpass.getuser()+"/git/Game Theory/Maze_Measuring_Data/"
 #coop and non coop has to be added
 #Format: maze_size, same_maze, num_it, (strategy), (coop), time
 #bracket attributes have to be added
-name = str(n)+"_"+str(new_maze_perIt)+"_"+str(iterations-num_it)+"_"+str(seconds)+".txt"
+name = str(n)+"_"+str(new_maze_perIt)+"_"+str(iterations-num_it)+"_"+str(num_players)+"_"+str(seconds)+".txt"
 name = path+name
 file = open(name, "w")
 
@@ -529,7 +562,7 @@ for i in output:
     file.write(str(i)+" "+str(output[i])+"\n")
 
 
-file.close()"""
+file.close()
 
 #
 

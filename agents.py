@@ -13,11 +13,12 @@ class Agent:
 
         """self.speed = speed
         self.sight = sight
+        self.lab = lab
         self.memory = memory"""
 
         self.collab_prob = collab_prob  #optional
 
-        self.lab = lab
+        self.collab_cooldown = 0
         self.stack = []
         self.visited = []        
         self.dead_ends = set()
