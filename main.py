@@ -159,10 +159,10 @@ class Maze(Widget):
                 if p.a_id != p2.a_id and p.collab_cooldown == 0 and p2.collab_cooldown == 0:
                     p.collab_cooldown = 0   #num_players-5
                     p.collab_cooldown = 0   #num_players-5
-                    for pos in p2.dead_ends:
-                        p.dead_ends.add(pos)
-                    for pos in p.dead_ends:
-                        p2.dead_ends.add(pos)
+                    #pass informaiton between collaboraters
+                    if(self.will_collab(p, p2)):
+                        p.pass_message(p2)
+                    
 
         #print the stack of each player to debug
         """for p in self.players:
@@ -227,7 +227,10 @@ class Maze(Widget):
                 self.finished = True
                 print("done")
 
-        
+    #returns whether two players collaborate
+    def will_collab (self, p1, p2):
+        rand_num = rand.random()  # Generate a random number between 0 and 1
+        return rand_num <= p1.collab_prob * p2.collab_prob    
 
     def pc_player(self, dt):
         with self.canvas:
