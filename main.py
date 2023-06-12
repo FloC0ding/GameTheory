@@ -42,26 +42,26 @@ wall_y = height/(n)
 p_size = 5
 
 #simulation settings
-update_speed = 0.0005  #number of seconds for which the update function is called
-num_it = 100
+update_speed = 0.000005  #number of seconds for which the update function is called
+num_it = 10
 iterations = num_it
 c_temp = []
 new_maze_perIt = False
-gui = True
+gui = False
 
 #counts the minimal number of steps to escape works only for same_maze
 solve_maze_step = 0
 #cooperative parameters
-num_players = 1
+num_players = 5
 p_outofbound = 0
 
 player_type = {
     "Altruist": 0.001,
-    "Individualistic": 0.05,
-    "Competitive":  0.2
+    "Individualistic": 0.02,
+    "Competitive":  0.05
 }
 
-
+player_storage = []
 
 class SimGame(Widget):
     pass
@@ -80,7 +80,7 @@ class Maze(Widget):
         self.draw_maze()
         #initialize variables non_coop
         self.count = 0
-        self.p1 = A.Agent(-1, -1, -1, -1, 0, 0, [], 0, 0)
+        self.p1 = A.Agent(-1, -1, -1, -1, 1, 0, [], 0, 0)
         self.visited = []
         self.stack = []
         
@@ -88,10 +88,10 @@ class Maze(Widget):
 
         #implement cooperative game mode
         self.players = []
-        self.player_storage = []
         id = 0
         for i in range(0, num_players):
-            p = A.Agent(-1, -1, -1, -1, 1, 0, [], 0, 0)
+            types = player_type.keys()
+            p = A.Agent(-1, -1, -1, -1, 1, "Altruist", [], 0, 0)        #types[rand.randint(0, 2)]
             p.a_id = id
             id += 1
             self.players.append(p)
@@ -170,6 +170,10 @@ class Maze(Widget):
                     #pass informaiton between collaboraters
                     if(self.will_collab(p, p2)):
                         p.pass_message(p2)
+                        p2.pass_message(p)
+                        p.update_probability(player_type[p.a_type])     #maybe change probability after iterating through all players
+                        p2.update_probability(player_type[p2.a_type])
+
                     
 
         #print the stack of each player to debug
@@ -193,10 +197,14 @@ class Maze(Widget):
             if self.player_out_of_bound(p):
                 p_outofbound += 1
                 c_temp.append(p.count)
+                if p.count not in p.output:
+                    p.output[p.count] = 1
+                else: p.output[p.count] += 1
+
                 p.visited.clear()
                 p.stack.clear()
 
-                self.player_storage.append(p) 
+                player_storage.append(p) 
                 self.players.remove(p)
                 
 
@@ -219,11 +227,12 @@ class Maze(Widget):
                 self.start = False
                 #no need to delete players from gui (already deleted)
                 #reinstantiate all players
-                id = 0
-                self.players.extend(self.player_storage)
-                for p in self.players:
-                    self.initialize_player_random(p)
+                self.players.extend(player_storage)
+                player_storage.clear()
 
+                for p in self.players:
+                    p.count = 0
+                    self.initialize_player_random(p)
                 """if gui: 
                     with self.canvas: 
                         Color(0, 0, 0)
@@ -555,10 +564,11 @@ if __name__ == '__main__':
 
 #IO write c_temp into text file
 #
-output = {}
+"""output = {}
 for i in c_temp:
     if i not in output: output[i] = 1
-    else: output[i] += 1
+    else: output[i] += 1"""
+
 
 
 seconds = time.time()
@@ -571,8 +581,10 @@ name = str(n)+"_"+str(new_maze_perIt)+"_"+str(iterations-num_it)+"_"+str(num_pla
 name = path+name
 file = open(name, "w")
 
-for i in output:
-    file.write(str(i)+" "+str(output[i])+"\n")
+for p in player_storage:
+    file.write("player: "+str(p.a_id)+"\n")
+    for i in p.output:
+        file.write(str(i)+" "+str(p.output[i])+"\n")
 
 
 file.close()

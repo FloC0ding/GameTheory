@@ -26,11 +26,16 @@ class Agent:
         self.dead_ends = set()
         
 
+        self.output = {}
             
             
     def get_position (self):
         return [self.pos_x, self.pos_y]
         
     def pass_message(self, collaborater):
-        self.dead_ends.extend(collaborater.dead_ends)
+        self.dead_ends = self.dead_ends | collaborater.dead_ends
+
+    def update_probability(self, val):
+        if self.collab_prob - val > 0: self.collab_prob -= val
+        else: self.collab_prob = 0
     
