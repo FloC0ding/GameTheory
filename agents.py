@@ -28,7 +28,6 @@ class Agent:
     def get_position (self):
         return [self.pos_x, self.pos_y]
         
-    def pass_message(self, agent):
-        self.visited_collab.extend(self.visited)
-        self.stack_collab.extend(self.stack)    
+    def pass_message(self, collaborater):
+        self.dead_ends.extend(collaborater.dead_ends)
     
