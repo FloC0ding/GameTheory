@@ -28,7 +28,7 @@ import time
 import getpass
 
 
-size = 16        #35 still reasonably fast(creating maze)
+size = 21        #35 still reasonably fast(creating maze)
 n = size-1      #number of fields of the labyrinth per row or line
 
 width = Window.size[0]
@@ -42,7 +42,7 @@ wall_y = height/(n)
 p_size = 5
 
 #simulation settings
-update_speed = 0.000005  #number of seconds for which the update function is called
+update_speed = 0.5  #number of seconds for which the update function is called
 num_it = 100
 iterations = num_it
 c_temp = []
@@ -52,7 +52,7 @@ gui = True
 #counts the minimal number of steps to escape works only for same_maze
 solve_maze_step = 0
 #cooperative parameters
-num_players = 15
+num_players = 1
 p_outofbound = 0
 
 
@@ -109,7 +109,8 @@ class Maze(Widget):
         global num_it
         global p_outofbound
 
-        if self.finished: print("done")
+        if self.finished: 
+            return
 
         #update old position of players and overdraw them if necessary
         if self.start:
@@ -128,14 +129,14 @@ class Maze(Widget):
         """if gui: 
             for p in self.players:
                 with self.canvas:   Color(0, 1, 1)  #Turqoise
-                #for v in p.visited:
-                #    self.draw_field(v)
+                for v in p.visited:
+                    self.draw_field(v)
                 for v in p.stack:
                     with self.canvas: Color(0, 1, 0)    #Green
                     self.draw_field(v)
-                #for v in p.dead_ends:
-                #    with self.canvas: Color(0.5, 0.5, 1)    #Purple
-                #    self.draw_field(v)"""
+                for v in p.dead_ends:
+                    with self.canvas: Color(0.5, 0.5, 1)    #Purple
+                    self.draw_field(v)"""
 
         #draw players
         if gui: 
@@ -222,7 +223,9 @@ class Maze(Widget):
                         Rectangle(pos=(0, 0), size=(width, height))
                     self.draw_maze()"""
 
-            else: self.finished = True
+            else: 
+                self.finished = True
+                print("done")
 
         
 
@@ -263,7 +266,7 @@ class Maze(Widget):
                 #print(self.count)
                 c_temp.append(self.count)
                 
-                if num_it % 100 == 0:
+                if num_it % 20 == 0:
                     print(num_it)
 
                 num_it -= 1
