@@ -43,7 +43,7 @@ p_size = 5
 
 #simulation settings
 update_speed = 0.000005  #number of seconds for which the update function is called
-num_it = 10
+num_it = 3
 iterations = num_it
 c_temp = []
 new_maze_perIt = False
@@ -56,9 +56,9 @@ num_players = 5
 p_outofbound = 0
 
 player_type = {
-    "Altruist": 0.001,
-    "Individualistic": 0.02,
-    "Competitive":  0.05
+    "Altruist": 0.01,
+    "Individualist": 0.05,
+    "Competitive":  0.15
 }
 
 player_storage = []
@@ -80,7 +80,7 @@ class Maze(Widget):
         self.draw_maze()
         #initialize variables non_coop
         self.count = 0
-        self.p1 = A.Agent(-1, -1, -1, -1, 1, 0, [], 0, 0)
+        self.p1 = A.Agent(-1, -1, -1, -1, 1, "Altruist", [], 0, 0)
         self.visited = []
         self.stack = []
         
@@ -582,7 +582,7 @@ name = path+name
 file = open(name, "w")
 
 for p in player_storage:
-    file.write("player: "+str(p.a_id)+"\n")
+    file.write("player: "+str(p.a_id)+" "+p.a_type+"\n")
     for i in p.output:
         file.write(str(i)+" "+str(p.output[i])+"\n")
 
