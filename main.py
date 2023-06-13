@@ -43,16 +43,16 @@ p_size = 5
 
 #simulation settings
 update_speed = 0.000005  #number of seconds for which the update function is called
-num_it = 3
+num_it = 10
 iterations = num_it
 c_temp = []
 new_maze_perIt = False
-gui = False
+gui = True
 
 #counts the minimal number of steps to escape works only for same_maze
 solve_maze_step = 0
 #cooperative parameters
-num_players = 5
+num_players = 10
 p_outofbound = 0
 
 player_type = {
@@ -90,8 +90,8 @@ class Maze(Widget):
         self.players = []
         id = 0
         for i in range(0, num_players):
-            types = player_type.keys()
-            p = A.Agent(-1, -1, -1, -1, 1, "Altruist", [], 0, 0)        #types[rand.randint(0, 2)]
+            types = list(player_type.keys())
+            p = A.Agent(-1, -1, -1, -1, 1, types[rand.randint(0, len(types)-1)], [], 0, 0)        #types[rand.randint(0, 2)]
             p.a_id = id
             id += 1
             self.players.append(p)
