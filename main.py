@@ -43,7 +43,7 @@ p_size = 5
 
 #simulation settings
 update_speed = 0.000005  #number of seconds for which the update function is called
-num_it = 10
+num_it = 3
 iterations = num_it
 c_temp = []
 new_maze_perIt = False
@@ -203,6 +203,7 @@ class Maze(Widget):
 
                 p.visited.clear()
                 p.stack.clear()
+                p.dead_ends.clear()
 
                 player_storage.append(p) 
                 self.players.remove(p)
@@ -232,6 +233,7 @@ class Maze(Widget):
 
                 for p in self.players:
                     p.count = 0
+                    
                     self.initialize_player_random(p)
                 """if gui: 
                     with self.canvas: 

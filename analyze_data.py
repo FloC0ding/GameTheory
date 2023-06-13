@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
 import random
+import getpass
 
 x, y = [], []
 
-name = "20_False_10_5_1686648971.6075137.txt"
-path = "C:/Users/Florian/git/Game Theory/Maze_Measuring_Data/"+name
+name = "20_False_3_10_1686658115.4765236.txt"
+path = "C:/Users/"+getpass.getuser()+"/git/Game Theory/Maze_Measuring_Data/"+name
 file = open(path, "r")
 
 x_alt, y_alt = [], []
@@ -23,7 +24,6 @@ while True:
     line = line.split(" ")
 
     if line[0] == "player:":
-        print(line)
         alt, ind, comp = False, False, False
         type = line[2].split("\n")[0]
         if type == "Altruist":
