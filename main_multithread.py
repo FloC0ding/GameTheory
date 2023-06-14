@@ -19,7 +19,7 @@ import getpass
 import threading
 
 
-n = 31              #number of fields of the labyrinth per row or line
+n = 25              #number of fields of the labyrinth per row or line
 size = n+1        #35 still reasonably fast(creating maze)
 
 
@@ -40,12 +40,12 @@ gui = False
 #counts the minimal number of steps to escape works only for same_maze
 solve_maze_step = 0
 #cooperative parameters
-num_players = 1
+num_players = 10
 
 player_type = {
-    "Altruist": 0.01,
-    "Individualist": 0.025,
-    "Competitive":  0.05
+    "Altruist": 0.0,
+    "Individualist": 0.0,
+    "Competitive":  0.0
 }
 
 #player_storage = {}     #lock this list maps thread_id to a list of players
@@ -65,7 +65,7 @@ class Maze():
         self.n_copy = n
         self.num_players_c = num_players
 
-        self.num_it = 1000
+        self.num_it = 200
         self.iterations = self.num_it
 
         #initialize variables

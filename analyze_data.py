@@ -1,10 +1,12 @@
 import matplotlib.pyplot as plt
 import random
 import getpass
+import numpy as np
+import math
 
 x, y = [], []
 
-name = "31_150_1_1686736021.6639714.txt"
+name = "25_2000_10_1686751473.8268073.txt"
 path = "C:/Users/"+getpass.getuser()+"/git/Game Theory/Maze_Measuring_Data/"+name
 file = open(path, "r")
 
@@ -15,6 +17,8 @@ x_comp, y_comp = [], []
 start = False
 alt, ind, comp = False, False, False
 type = ""
+data_min, data_max = 100000, 0
+
 
 while True:
 
@@ -22,6 +26,7 @@ while True:
 
     if not line: break
     line = line.split(" ")
+
 
     if line[0] == "player:":
         alt, ind, comp = False, False, False
@@ -34,19 +39,14 @@ while True:
 
         if not start: 
             start = True
-
-
-        """(r, g, b) = (random.random(), random.random(), random.random())
-        print(r)
-        print(g)
-        print(b)
-        plt.bar(x, y, color=(r, g, b))
-        x.clear()
-        y.clear()"""
         pass
     else:
         x.append(int(line[0]))
         y.append(int(line[1].split("\n")[0]))
+        data_min = min(data_min, int(line[0]))
+        data_max = max(data_max, int(line[0]))
+
+
         if alt: 
             x_alt.append(int(line[0]))
             y_alt.append(int(line[1].split("\n")[0]))
@@ -72,11 +72,35 @@ while True:
 
 #ax4.bar(x_comp, y_comp)
 #ax4.set_title("Competitive")
+
+
+def change_width(x, y):
+    new_x, new_y = [], []
+    #each value is 
+
+
+
+
+
 plt.figure(1)
 plt.bar(x, y)
 
-plt.figure(2)
-plt.bar(x_alt, y_alt)
+
+"""xticks = np.linspace(data_min, data_max, 10)
+xticks = np.ceil(xticks)
+
+# Split the data based on xticks intervals
+splitted_data = np.digitize(x, xticks)
+
+# Plot the splitted data
+for i in range(1, len(xticks)):
+    indices = np.where(splitted_data == i)
+    plt.bar(np.array(x)[indices], np.array(y)[indices])
+
+plt.xticks(xticks)"""
+
+#plt.figure(2)
+#plt.bar(x_alt, y_alt)
 
 
 #plt.tight_layout()

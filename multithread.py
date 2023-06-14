@@ -4,14 +4,14 @@ import graph
 import threading
 import time
 import getpass
-import copy
+import sys
 
-num_threads = 12
+num_threads = 10
 
 def runner(thread_num, maze):
     while not maze.finished:
         maze.pc_cooperative()
-        time.sleep(0.0001)
+        #time.sleep(0.0000000001)
 
 mazes = []
 for _ in range(num_threads):
@@ -96,11 +96,11 @@ for maze in mazes:
         for i in p.output:
             output["player: "+str(p.a_id)+" "+p.a_type+"\n"][i] += 1
 
+
 for p_data in output:
     file.write(p_data)
     for x in output[p_data]:
         file.write(str(x)+" "+str(output[p_data][x])+"\n")
-
 """for maze in mazes:
     for p in maze.player_storage:
         file.write("player: "+str(p.a_id)+" "+p.a_type+"\n")
