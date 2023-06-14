@@ -112,6 +112,7 @@ class Maze(Widget):
         p.pos_x = rand.randint(0, n-1) + 0.5
         p.pos_y = rand.randint(0, n-1) + 0.5
 
+    
 
     def pc_cooperative(self, dt):
         global num_it
