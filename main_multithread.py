@@ -220,18 +220,18 @@ class Maze():
                 self.finished = True
                 print("done")
 
-    #returns whether two players collaborate
-    def will_collab (self, p1, p2, i):
+    # returns whether two players collaborate
+    def will_collab (self, p1, p2):
         information_ratio = p1.dead_ends.size()/p2.dead_ends.size()
         # competitive behaviour
-        if i == 0:
-            return information_ratio > 2
+        if p1.a_type == "Competitive":
+            return information_ratio < 0.5
         # neutral behaviour
-        if i == 1:
-            return information_ratio > 1
+        if p1.a_type == "Individualist":
+            return information_ratio < 1
         # altruistic behaviour
-        if i ==2:
-            return information_ratio > 1   
+        if p1.a_type == "Altruist":
+            return information_ratio < 2
 
     """def pc_player(self, dt):
         with self.canvas:
