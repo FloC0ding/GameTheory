@@ -42,7 +42,7 @@ class Maze():
 
 
 
-    def __init__(self, n, num_players, num_it, p1=0.0, p2=0.0, p3=0.0, n1 = n, n2 = 0, n3 = 0):  #, **kwargs): 
+    def __init__(self, n, num_players, num_it, p1, p2, p3, n1, n2, n3):  #, **kwargs): 
         #super(Maze, self).__init__(**kwargs)
         self.player_type = {
             "Altruist": p1,
@@ -57,8 +57,9 @@ class Maze():
         num_alt = n1
         num_ind = n2
         num_comp = n3
-
-        if n1+n2+n3 != n: print("ERROR number of groups incorrectly assigned")
+        
+        
+        if n1+n2+n3 != num_players: print("ERROR number of groups incorrectly assigned")
 
         #initialize multithreading variables
         #player_storage[threading.get_ident()] = []
