@@ -1,1 +1,2 @@
-# num_threads maze_size, num_players, num_it, p1, p2 ,p3 , num_Altruist, num_Ind, num_Competitive
+# num_threads, maze_size, num_players, num_it, p1, p2 ,p3 , num_Altruist, num_Ind, num_Competitive
+10 10 10 100 0 0 0 3 3 4

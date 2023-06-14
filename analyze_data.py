@@ -6,7 +6,7 @@ import math
 
 x, y = [], []
 
-name = "20_200_5_1686765058.410113.txt"
+name = "10_1000_10_1686767276.3194375.txt"
 path = "C:/Users/"+getpass.getuser()+"/git/Game Theory/Maze_Measuring_Data/"+name
 file = open(path, "r")
 

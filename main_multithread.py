@@ -142,9 +142,8 @@ class Maze():
                     #pass informaiton between collaboraters
                     if(self.will_collab(p, p2) and self.will_collab(p2, p)):
                         p.pass_message(p2)
-                        p2.pass_message(p)
-                        p.update_probability(self.player_type[p.a_type])     #maybe change probability after iterating through all players
-                        p2.update_probability(self.player_type[p2.a_type])
+                    
+                       
 
                     
 
@@ -222,7 +221,9 @@ class Maze():
 
     # returns whether two players collaborate
     def will_collab (self, p1, p2):
-        information_ratio = p1.dead_ends.size()/p2.dead_ends.size()
+        if len(p2.dead_ends) == 0:
+            return False
+        information_ratio = len(p1.dead_ends)/len(p2.dead_ends)
         # competitive behaviour
         if p1.a_type == "Competitive":
             return information_ratio < 0.5
