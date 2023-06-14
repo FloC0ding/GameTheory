@@ -56,12 +56,15 @@ def helper2(v, F):
 
 class Graph:
 
-    def __init__(self, n):
+    def __init__(self, n=-1):
+
         self.vertices = set()
         self.edges = []
         self.neighbour_edges = {}
 
-        if n <= 0: print("ERROR")
+
+        if n <= 0: return
+
         for i in range(0, n):
             for j in range(0, n):
                 current_v = Vertex(i, j)

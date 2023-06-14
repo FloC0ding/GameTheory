@@ -19,7 +19,7 @@ import getpass
 import threading
 
 
-n = 20              #number of fields of the labyrinth per row or line
+n = 31              #number of fields of the labyrinth per row or line
 size = n+1        #35 still reasonably fast(creating maze)
 
 
@@ -65,11 +65,12 @@ class Maze():
         self.n_copy = n
         self.num_players_c = num_players
 
-        self.num_it = 100
+        self.num_it = 1000
         self.iterations = self.num_it
 
         #initialize variables
-        self.maze = G.Graph(size) 
+        self.maze = G.Graph() 
+        #self.maze = G.Graph()
         self.start = False
         self.finished = False
         self.p_outofbound = 0
@@ -108,6 +109,7 @@ class Maze():
             id += 1
             self.players.append(p)
             self.initialize_player_random(p)
+            #self.initialize_player(p)
             
 
 

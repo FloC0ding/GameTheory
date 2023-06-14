@@ -43,16 +43,16 @@ p_size = 5
 
 #simulation settings
 update_speed = 0.000005  #number of seconds for which the update function is called
-num_it = 3
+num_it = 100
 iterations = num_it
 c_temp = []
 new_maze_perIt = False
-gui = True
+gui = False
 
 #counts the minimal number of steps to escape works only for same_maze
 solve_maze_step = 0
 #cooperative parameters
-num_players = 10
+num_players = 1
 p_outofbound = 0
 
 player_type = {
@@ -219,7 +219,7 @@ class Maze(Widget):
             #print("FINISHED")
             
             #usefull when programm runs long
-            if num_it % 100 == 0:
+            if num_it % 20 == 0:
                     print(num_it)
             num_it -= 1
             if num_it > 0:

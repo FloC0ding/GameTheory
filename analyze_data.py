@@ -4,7 +4,7 @@ import getpass
 
 x, y = [], []
 
-name = "20_100_10_1686676141.3829684.txt"
+name = "31_150_1_1686736021.6639714.txt"
 path = "C:/Users/"+getpass.getuser()+"/git/Game Theory/Maze_Measuring_Data/"+name
 file = open(path, "r")
 
@@ -57,27 +57,29 @@ while True:
             x_comp.append(int(line[0]))
             y_comp.append(int(line[1].split("\n")[0]))
 
-fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1)
+#fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1)
 
 #plt.figure(1)
 #plt.bar(x, y)
-ax1.bar(x, y)
-"""plt.xlabel('Number of steps to comlete maze')
-plt.xlabel('Number of players finished with x many steps')
-plt.title("All Players")"""
-ax1.set_title("all players")
+#ax1.bar(x, y)
+#ax1.set_title("all players")
 
-ax2.bar(x_alt, y_alt)
-ax2.set_title("Altruists")
+#ax2.bar(x_alt, y_alt)
+#ax2.set_title("Altruists")
 
-ax3.bar(x_ind, y_ind)
-ax3.set_title("Individualists")
+#ax3.bar(x_ind, y_ind)
+#ax3.set_title("Individualists")
 
-ax4.bar(x_comp, y_comp)
-ax4.set_title("Competitive")
-#plt.figure(2)
-#plt.bar(x_alt, y_alt)
-plt.tight_layout()
+#ax4.bar(x_comp, y_comp)
+#ax4.set_title("Competitive")
+plt.figure(1)
+plt.bar(x, y)
+
+plt.figure(2)
+plt.bar(x_alt, y_alt)
+
+
+#plt.tight_layout()
 
 plt.show()
 

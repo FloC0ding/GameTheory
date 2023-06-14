@@ -1,9 +1,12 @@
 import main_multithread as Maze
+import graph
+
 import threading
 import time
 import getpass
+import copy
 
-num_threads = 20
+num_threads = 12
 
 def runner(thread_num, maze):
     while not maze.finished:
@@ -13,9 +16,44 @@ def runner(thread_num, maze):
 mazes = []
 for _ in range(num_threads):
     mazes.append(Maze.Maze())
-m = mazes[0]
-for i in mazes: i = m 
 
+
+
+k = graph.Graph(mazes[0].n_copy+1)
+
+#copy differently such that no reference happens
+for m in mazes:
+    m.maze = k
+
+"""def copy_edges(edges, vertices):
+    copy = {}
+    for v in vertices:
+        copy[v] = []
+    for v in edges:
+        for u in edges[v]:
+            k = graph.Vertex(u.pos_x, u.pos_y)
+            copy[v].append(k)
+    return copy
+
+def copy_vertices(vertices):
+    copy = set()
+    for v in vertices:
+        u = graph.Vertex(v.pos_x, v.pos_y)
+        copy.add(u)
+    return copy
+
+
+size = mazes[0].n_copy
+m =  graph.Graph(size)
+v = m.vertices
+e = m.neighbour_edges
+
+
+for i in mazes: 
+    i.maze.vertices = copy_vertices(v)
+    i.maze.neighbour_edges = copy_edges(e, v)"""
+
+#print("Finished initializing")
 
 threads = []
 
@@ -38,7 +76,7 @@ path = "C:/Users/"+getpass.getuser()+"/git/Game Theory/Maze_Measuring_Data/"
 #coop and non coop has to be added
 #Format: maze_size, same_maze, num_it, (strategy), (coop), time
 #bracket attributes have to be added
-name = str(mazes[0].n_copy)+"_"+str(mazes[0].iterations)+"_"+str(mazes[0].num_players_c)+"_"+str(seconds)+".txt"
+name = str(mazes[0].n_copy)+"_"+str(mazes[0].iterations * num_threads)+"_"+str(mazes[0].num_players_c)+"_"+str(seconds)+".txt"
 name = path+name
 file = open(name, "w")
 
