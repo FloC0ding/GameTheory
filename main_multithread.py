@@ -19,18 +19,10 @@ import getpass
 import threading
 
 
-n = 20              #number of fields of the labyrinth per row or line
-
-
-
-
-
-
 #player
 p_size = 5
 
 #simulation settings
-update_speed = 0.000005  #number of seconds for which the update function is called
 #num_it = 10
 #iterations = num_it
 c_temp = []
@@ -40,13 +32,7 @@ gui = False
 #counts the minimal number of steps to escape works only for same_maze
 solve_maze_step = 0
 #cooperative parameters
-num_players = 5
 
-player_type = {
-    "Altruist": 0.001,
-    "Individualist": 0.02,
-    "Competitive":  0.05
-}
 
 #player_storage = {}     #lock this list maps thread_id to a list of players
 #thread_id -> []
@@ -56,16 +42,29 @@ class Maze():
 
 
 
-    def __init__(self):  #, **kwargs): 
+    def __init__(self, n, num_players, num_it, p1=0.0, p2=0.0, p3=0.0, n1 = n, n2 = 0, n3 = 0):  #, **kwargs): 
         #super(Maze, self).__init__(**kwargs)
+        self.player_type = {
+            "Altruist": p1,
+            "Individualist": p2,
+            "Competitive":  p3
+        }
+        self.n = n
+        self.num_it = num_it
+
+        #implement cooperative game mode
+        #choose the amount of different players
+        num_alt = n1
+        num_ind = n2
+        num_comp = n3
+
+        if n1+n2+n3 != n: print("ERROR number of groups incorrectly assigned")
 
         #initialize multithreading variables
         #player_storage[threading.get_ident()] = []
         self.player_storage = []
-        self.n = 0
-        self.num_players_c = num_players
+        self.num_players = num_players
 
-        self.num_it = 100
         self.iterations = self.num_it
 
         #initialize variables
@@ -82,16 +81,11 @@ class Maze():
         
         self.initialize_player(self.p1)
 
-        #implement cooperative game mode
-        #choose the amount of different players
-        num_alt = num_players/3
-        num_ind = num_players/3
-        num_comp = num_players - num_ind - num_alt
 
 
         self.players = []
         id = 0
-        for _ in range(0, num_players):
+        for _ in range(0, self.num_players):
             #types = list(player_type.keys())
             #p = A.Agent(-1, -1, -1, -1, 1, types[rand.randint(0, len(types)-1)], [], 0, 0)        #types[rand.randint(0, 2)]
             type = ""
@@ -150,8 +144,8 @@ class Maze():
                     if(self.will_collab(p, p2)):
                         p.pass_message(p2)
                         p2.pass_message(p)
-                        p.update_probability(player_type[p.a_type])     #maybe change probability after iterating through all players
-                        p2.update_probability(player_type[p2.a_type])
+                        p.update_probability(self.player_type[p.a_type])     #maybe change probability after iterating through all players
+                        p2.update_probability(self.player_type[p2.a_type])
 
                     
 
@@ -197,7 +191,7 @@ class Maze():
 
         
         #check if the game is over and all players escaped
-        if self.p_outofbound == num_players: 
+        if self.p_outofbound == self.num_players: 
             #print("FINISHED")
             
             #usefull when programm runs long

@@ -7,15 +7,29 @@ import getpass
 
 num_threads = 20
 
+
+file = open("input.txt", "r")
+
+while True:
+
+    line = file.readline()
+    if not line: break
+
+    line = line.split(" ")
+    num_threads = int(line[0])
+    n, p, num_it = int(line[1]), int(line[2]), int(line[3])
+    #p1, p2, p3 = 
+
+
 def runner(thread_num, maze):
     while not maze.finished:
         maze.pc_cooperative()
         #time.sleep(0.0000000001)
 
-def run_simulation(n, num_players, p1, p2, p3, n1, n2, n3): 
+def run_simulation(n, num_players, num_it, p1, p2, p3, n1, n2, n3): 
     mazes = []
     for _ in range(num_threads):
-        mazes.append(Maze.Maze())
+        mazes.append(Maze.Maze(n, num_players, num_it, p1, p2, p3, n1, n2, n3))
 
 
 
@@ -47,7 +61,7 @@ def run_simulation(n, num_players, p1, p2, p3, n1, n2, n3):
     #coop and non coop has to be added
     #Format: maze_size, same_maze, num_it, (strategy), (coop), time
     #bracket attributes have to be added
-    name = str(mazes[0].n)+"_"+str(mazes[0].iterations * num_threads)+"_"+str(mazes[0].num_players_c)+"_"+str(seconds)+".txt"
+    name = str(mazes[0].n)+"_"+str(mazes[0].iterations * num_threads)+"_"+str(mazes[0].num_players)+"_"+str(seconds)+".txt"
     name = path+name
     file = open(name, "w")
 
