@@ -40,7 +40,7 @@ gui = False
 #counts the minimal number of steps to escape works only for same_maze
 solve_maze_step = 0
 #cooperative parameters
-num_players = 10
+num_players = 1
 
 player_type = {
     "Altruist": 0.01,
@@ -82,11 +82,28 @@ class Maze():
         self.initialize_player(self.p1)
 
         #implement cooperative game mode
+        #choose the amount of different players
+        num_alt = num_players/3
+        num_ind = num_players/3
+        num_comp = num_players - num_ind - num_alt
+
+
         self.players = []
         id = 0
         for _ in range(0, num_players):
-            types = list(player_type.keys())
-            p = A.Agent(-1, -1, -1, -1, 1, types[rand.randint(0, len(types)-1)], [], 0, 0)        #types[rand.randint(0, 2)]
+            #types = list(player_type.keys())
+            #p = A.Agent(-1, -1, -1, -1, 1, types[rand.randint(0, len(types)-1)], [], 0, 0)        #types[rand.randint(0, 2)]
+            type = ""
+            if num_alt > 0:
+                num_alt -= 1
+                type = "Altruist"
+            elif num_ind > 0:
+                num_ind -= 1
+                type = "Individualist"
+            elif num_comp > 0:
+                num_comp -= 1
+                type = "Competitive"
+            p = A.Agent(-1, -1, -1, -1, 1, type, [], 0, 0)        #types[rand.randint(0, 2)]
             p.a_id = id
             id += 1
             self.players.append(p)

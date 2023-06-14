@@ -4,7 +4,7 @@ import getpass
 
 x, y = [], []
 
-name = "20_100_10_1686672993.1868582.txt"
+name = "20_100_10_1686676141.3829684.txt"
 path = "C:/Users/"+getpass.getuser()+"/git/Game Theory/Maze_Measuring_Data/"+name
 file = open(path, "r")
 
