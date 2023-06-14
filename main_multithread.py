@@ -141,7 +141,7 @@ class Maze():
                     p.collab_cooldown = 0   #num_players-5
                     p.collab_cooldown = 0   #num_players-5
                     #pass informaiton between collaboraters
-                    if(self.will_collab(p, p2)):
+                    if(self.will_collab(p, p2) and self.will_collab(p2, p)):
                         p.pass_message(p2)
                         p2.pass_message(p)
                         p.update_probability(self.player_type[p.a_type])     #maybe change probability after iterating through all players
@@ -222,9 +222,17 @@ class Maze():
                 print("done")
 
     #returns whether two players collaborate
-    def will_collab (self, p1, p2):
-        rand_num = rand.random()  # Generate a random number between 0 and 1
-        return rand_num <= p1.collab_prob * p2.collab_prob    
+    def will_collab (self, p1, p2, i):
+        information_ratio = p1.dead_ends.size()/p2.dead_ends.size()
+        # competitive behaviour
+        if i == 0:
+            return information_ratio > 2
+        # neutral behaviour
+        if i == 1:
+            return information_ratio > 1
+        # altruistic behaviour
+        if i ==2:
+            return information_ratio > 1   
 
     """def pc_player(self, dt):
         with self.canvas:
