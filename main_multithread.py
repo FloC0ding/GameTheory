@@ -19,8 +19,8 @@ import getpass
 import threading
 
 
-n = 25              #number of fields of the labyrinth per row or line
-size = n+1        #35 still reasonably fast(creating maze)
+n = 20              #number of fields of the labyrinth per row or line
+
 
 
 
@@ -40,12 +40,12 @@ gui = False
 #counts the minimal number of steps to escape works only for same_maze
 solve_maze_step = 0
 #cooperative parameters
-num_players = 10
+num_players = 5
 
 player_type = {
-    "Altruist": 0.0,
-    "Individualist": 0.0,
-    "Competitive":  0.0
+    "Altruist": 0.001,
+    "Individualist": 0.02,
+    "Competitive":  0.05
 }
 
 #player_storage = {}     #lock this list maps thread_id to a list of players
@@ -62,10 +62,10 @@ class Maze():
         #initialize multithreading variables
         #player_storage[threading.get_ident()] = []
         self.player_storage = []
-        self.n_copy = n
+        self.n = 0
         self.num_players_c = num_players
 
-        self.num_it = 200
+        self.num_it = 100
         self.iterations = self.num_it
 
         #initialize variables
@@ -111,20 +111,21 @@ class Maze():
             self.initialize_player_random(p)
             #self.initialize_player(p)
             
-
+    def initialize_n(self, n):
+        self.n = n
 
     def initialize_player(self, p):
          #initialize p1 position
-        if n % 2 == 0:
-            p.pos_x = (n+1)/2
-            p.pos_y = (n+1)/2
+        if self.n % 2 == 0:
+            p.pos_x = (self.n+1)/2
+            p.pos_y = (self.n+1)/2
         else :
-            p.pos_x = n/2
-            p.pos_y = n/2
+            p.pos_x = self.n/2
+            p.pos_y = self.n/2
     
     def initialize_player_random(self, p):
-        p.pos_x = rand.randint(0, n-1) + 0.5
-        p.pos_y = rand.randint(0, n-1) + 0.5
+        p.pos_x = rand.randint(0, self.n-1) + 0.5
+        p.pos_y = rand.randint(0, self.n-1) + 0.5
 
 
     def pc_cooperative(self):
@@ -297,7 +298,7 @@ class Maze():
                 else: solve_maze_step =len(self.stack)"""
 
     def player_out_of_bound(self, p):
-        return not(0 <= p.pos_x < n and 0 <= p.pos_y < n)
+        return not(0 <= p.pos_x < self.n and 0 <= p.pos_y < self.n)
 
 
         

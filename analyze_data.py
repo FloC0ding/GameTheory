@@ -6,7 +6,7 @@ import math
 
 x, y = [], []
 
-name = "25_2000_10_1686751473.8268073.txt"
+name = "20_2000_5_1686762102.2156785.txt"
 path = "C:/Users/"+getpass.getuser()+"/git/Game Theory/Maze_Measuring_Data/"+name
 file = open(path, "r")
 
@@ -73,18 +73,47 @@ while True:
 #ax4.bar(x_comp, y_comp)
 #ax4.set_title("Competitive")
 
+width = 10
+print("Width of each pillar is: "+str(width+1))
 
-def change_width(x, y):
-    new_x, new_y = [], []
-    #each value is 
+x_n, y_n = [], []
+
+for i in range(data_min, data_max+1):
+    x_n.append(i)
+    y_n.append(0)
+
+for i in range(0, len(x)):
+    y_n[x[i]-data_min] += y[i]
+#print(x_n)
+#print(y_n)
+
+sorted_data = sorted(zip(x_n, y_n), key =lambda pair:pair[0])
+x_sorted, y_sorted = zip(*sorted_data)
+
+"""print("!!!!")
+print(x_sorted)
+print("!!!!!")
+print(y_sorted)"""
+
+x_grouped = [x_sorted[i:i+width] for i in range(0, len(x_sorted), width)]
+y_grouped = [sum(y_sorted[i:i+width]) for i in range(0, len(y_sorted), width)]
 
 
+x_flattened = [x for sublist in x_grouped for x in sublist]
 
+x_final, y_final = [], []
+for i in range(0, len(y_grouped)):
+    p = x_grouped[i]
+    for k in p:
+        x_final.append(k)
+        y_final.append(y_grouped[i])
 
 
 plt.figure(1)
-plt.bar(x, y)
+plt.bar(x_final, y_final)
 
+plt.figure(2)
+plt.bar(x, y)
 
 """xticks = np.linspace(data_min, data_max, 10)
 xticks = np.ceil(xticks)
