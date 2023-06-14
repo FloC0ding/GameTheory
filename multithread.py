@@ -24,7 +24,6 @@ def run_simulation(n, num_players, num_it, p1, p2, p3, n1, n2, n3):
 
     #copy differently such that no reference happens
     for m in mazes:
-        #m.initialize_n(10)
         m.maze = k
 
     threads = []
@@ -84,12 +83,16 @@ while True:
     line = file.readline()
     if not line: break
 
-    line = line.split(" ")
-    num_threads = int(line[0])
-    n, p, num_it = int(line[1]), int(line[2]), int(line[3])
-    p1, p2, p3 = float(line[4]), float(line[5]), float(line[6])
-    n1, n2, n3 = int(line[7]), int(line[8]), int(line[9].split("\n")[0])
 
-    print(p)
-    #run simulation and file writing function
-    run_simulation(n, p, num_it, p1, p2, p3, n1, n2, n3)
+    line = line.split(" ")
+    if line[0] == "#":
+        pass
+    else: 
+        num_threads = int(line[0])
+        n, p, num_it = int(line[1]), int(line[2]), int(line[3])
+        p1, p2, p3 = float(line[4]), float(line[5]), float(line[6])
+        n1, n2, n3 = int(line[7]), int(line[8]), int(line[9].split("\n")[0])
+    
+        #print(p)
+        #run simulation and file writing function
+        run_simulation(n, p, num_it, p1, p2, p3, n1, n2, n3)

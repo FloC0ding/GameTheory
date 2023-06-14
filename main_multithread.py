@@ -106,8 +106,6 @@ class Maze():
             self.initialize_player_random(p)
             #self.initialize_player(p)
             
-    def initialize_n(self, n):
-        self.n = n
 
     def initialize_player(self, p):
          #initialize p1 position

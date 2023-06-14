@@ -6,9 +6,11 @@ import math
 
 x, y = [], []
 
-name = "20_2000_5_1686762102.2156785.txt"
+name = "20_200_5_1686765058.410113.txt"
 path = "C:/Users/"+getpass.getuser()+"/git/Game Theory/Maze_Measuring_Data/"+name
 file = open(path, "r")
+
+
 
 x_alt, y_alt = [], []
 x_ind, y_ind = [], []
@@ -76,57 +78,70 @@ while True:
 width = 10
 print("Width of each pillar is: "+str(width+1))
 
-x_n, y_n = [], []
+def even_out(x, y):
+    x_n, y_n = [], []
 
-for i in range(data_min, data_max+1):
-    x_n.append(i)
-    y_n.append(0)
+    for i in range(data_min, data_max+1):
+        x_n.append(i)
+        y_n.append(0)
 
-for i in range(0, len(x)):
-    y_n[x[i]-data_min] += y[i]
-#print(x_n)
-#print(y_n)
+    for i in range(0, len(x)):
+        y_n[x[i]-data_min] += y[i]
+    #print(x_n)
+    #print(y_n)
 
-sorted_data = sorted(zip(x_n, y_n), key =lambda pair:pair[0])
-x_sorted, y_sorted = zip(*sorted_data)
+    sorted_data = sorted(zip(x_n, y_n), key =lambda pair:pair[0])
+    x_sorted, y_sorted = zip(*sorted_data)
 
-"""print("!!!!")
-print(x_sorted)
-print("!!!!!")
-print(y_sorted)"""
+    """print("!!!!")
+    print(x_sorted)
+    print("!!!!!")
+    print(y_sorted)"""
 
-x_grouped = [x_sorted[i:i+width] for i in range(0, len(x_sorted), width)]
-y_grouped = [sum(y_sorted[i:i+width]) for i in range(0, len(y_sorted), width)]
+    x_grouped = [x_sorted[i:i+width] for i in range(0, len(x_sorted), width)]
+    y_grouped = [sum(y_sorted[i:i+width]) for i in range(0, len(y_sorted), width)]
 
 
-x_flattened = [x for sublist in x_grouped for x in sublist]
+    x_flattened = [x for sublist in x_grouped for x in sublist]
 
-x_final, y_final = [], []
-for i in range(0, len(y_grouped)):
-    p = x_grouped[i]
-    for k in p:
-        x_final.append(k)
-        y_final.append(y_grouped[i])
+    x_final, y_final = [], []
+    for i in range(0, len(y_grouped)):
+        p = x_grouped[i]
+        for k in p:
+            x_final.append(k)
+            y_final.append(y_grouped[i])
 
+    return (x_final, y_final)
+
+
+p = even_out(x, y)
+x, y = p[0], p[1]
+
+p = even_out(x_alt, y_alt)
+x_alt, y_alt = p[0], p[1]
+
+p = even_out(x_ind, y_ind)
+x_ind, y_ind = p[0], p[1]
+
+p = even_out(x_comp, y_comp)
+x_comp, y_comp = p[0], p[1]
 
 plt.figure(1)
-plt.bar(x_final, y_final)
-
-plt.figure(2)
 plt.bar(x, y)
 
-"""xticks = np.linspace(data_min, data_max, 10)
-xticks = np.ceil(xticks)
+plt.figure(2)
+plt.bar(x_alt, y_alt)
 
-# Split the data based on xticks intervals
-splitted_data = np.digitize(x, xticks)
+plt.figure(3)
+plt.bar(x_ind, y_ind)
 
-# Plot the splitted data
-for i in range(1, len(xticks)):
-    indices = np.where(splitted_data == i)
-    plt.bar(np.array(x)[indices], np.array(y)[indices])
+plt.figure(4)
+plt.bar(x_comp, y_comp)
 
-plt.xticks(xticks)"""
+
+#TODO average for each type and for all results
+#maybe standard derivation
+#median
 
 #plt.figure(2)
 #plt.bar(x_alt, y_alt)
