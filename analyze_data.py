@@ -6,7 +6,7 @@ import math
 
 x, y = [], []
 
-name = "30_2000_10_1686795076.9382808.txt"
+name = "10_400_9_1686843959.6458101.txt"
 
 path = "C:/Users/"+getpass.getuser()+"/git/Game Theory/Maze_Measuring_Data/"+name
 file = open(path, "r")
@@ -157,6 +157,7 @@ print("Standard derivation of all competitive players: "+str(std_comp))
 
 plt.figure(0)
 plt.bar(x, y)
+plt.title("all together wrong")
 
 """p = even_out(x, y)
 x, y = p[0], p[1]
