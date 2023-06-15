@@ -59,6 +59,14 @@ def run_simulation(n, num_players, num_it, p1, p2, p3, n1, n2, n3):
 
     for maze in mazes:
         for p in maze.player_storage:
+            file.write("player: "+str(p.a_id)+" "+p.a_type+"\n")
+            for i in p.output:
+                file.write(str(i)+" "+str(p.output[i])+"\n")
+                #print(str(i)+", "+str(p.output[i]))
+
+    # better but wrong solution
+    """for maze in mazes:
+        for p in maze.player_storage:
             output["player: "+str(p.a_id)+" "+p.a_type+"\n"] = {}
 
     for maze in mazes:
@@ -66,16 +74,19 @@ def run_simulation(n, num_players, num_it, p1, p2, p3, n1, n2, n3):
             for i in p.output:
                 output["player: "+str(p.a_id)+" "+p.a_type+"\n"][i] = 0
 
+
     for maze in mazes:
         for p in maze.player_storage:
             for i in p.output:
                 output["player: "+str(p.a_id)+" "+p.a_type+"\n"][i] += 1
 
+    #print("________________")
 
     for p_data in output:
         file.write(p_data)
         for x in output[p_data]:
-            file.write(str(x)+" "+str(output[p_data][x])+"\n")
+            #print(str(x)+" "+str(output[p_data][x]))
+            file.write(str(x)+" "+str(output[p_data][x])+"\n")"""
 
     file.close()
 
