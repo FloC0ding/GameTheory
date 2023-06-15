@@ -104,8 +104,6 @@ def even_out(x, y):
     y_grouped = [sum(y_sorted[i:i+width]) for i in range(0, len(y_sorted), width)]
 
 
-    x_flattened = [x for sublist in x_grouped for x in sublist]
-
     x_final, y_final = [], []
     for i in range(0, len(y_grouped)):
         p = x_grouped[i]
