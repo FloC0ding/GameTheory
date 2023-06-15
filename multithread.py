@@ -42,6 +42,10 @@ def run_simulation(n, num_players, num_it, p1, p2, p3, n1, n2, n3):
 
     #write output into txt file
     seconds = time.time()
+
+    # path for Flo's One Drive
+    #path = "C:/Users/Florian/OneDrive/Game_Theory/Data/"
+    
     path = "C:/Users/"+getpass.getuser()+"/git/Game Theory/Maze_Measuring_Data/"
     #strategy has to be added at this point manually
     #coop and non coop has to be added
@@ -78,6 +82,8 @@ def run_simulation(n, num_players, num_it, p1, p2, p3, n1, n2, n3):
 
 file = open("input.txt", "r")
 
+c = 0
+
 while True:
 
     line = file.readline()
@@ -96,3 +102,5 @@ while True:
         #print(p)
         #run simulation and file writing function
         run_simulation(n, p, num_it, p1, p2, p3, n1, n2, n3)
+        c += 1
+        print("completed simulation nr: "+str(c))
