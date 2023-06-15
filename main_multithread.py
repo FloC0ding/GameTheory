@@ -170,9 +170,9 @@ class Maze():
                 """if p.count not in p.output:
                     p.output[p.count] = 1
                 else: p.output[p.count] += 1"""
-                if p.outofbound not in p.output:
-                    p.output[p.outofbound] = 1
-                else: p.output[p.outofbound] += 1
+                if self.outofbound not in p.output:
+                    p.output[self.outofbound] = 1
+                else: p.output[self.outofbound] += 1
 
                 p.visited.clear()
                 p.stack.clear()
