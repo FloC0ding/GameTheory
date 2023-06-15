@@ -4,24 +4,32 @@ import getpass
 import numpy as np
 import math
 
-x, y = [], []
 
-name = "10_400_9_1686843959.6458101.txt"
+name = "10_30_10_1686847170.9179761.txt"
 
 path = "C:/Users/"+getpass.getuser()+"/git/Game Theory/Maze_Measuring_Data/"+name
 file = open(path, "r")
 
 
 
+x, y = [], []
 x_alt, y_alt = [], []
 x_ind, y_ind = [], []
 x_comp, y_comp = [], []
+
+x_rank, y_rank = [], []
+x_alt_rank, y_alt_rank = [], []
+x_ind_rank, y_ind_rank = [], []
+x_comp_rank, y_comp_rank = [], []
+
 
 start = False
 alt, ind, comp = False, False, False
 type = ""
 data_min, data_max = 100000, 0
 data_y_max = 0
+
+is_rank = False
 
 while True:
 
@@ -31,9 +39,15 @@ while True:
     line = line.split(" ")
 
 
-    if line[0] == "player:":
+    if line[0] == "player:" or line[0] == "rank":
+
+        if line[0] == "rank": is_rank = True
+        else: is_rank = False
+
         alt, ind, comp = False, False, False
-        type = line[2].split("\n")[0]
+        type = ""
+        if not is_rank: type = line[2].split("\n")[0]
+        else: type = line[3].split("\n")[0]
         if type == "Altruist":
             alt = True
         elif type == "Individualist":
@@ -43,7 +57,9 @@ while True:
         if not start: 
             start = True
         pass
-    else:
+    elif not is_rank:
+        
+
         x.append(int(line[0]))
         y.append(int(line[1].split("\n")[0]))
         data_min = min(data_min, int(line[0]))
@@ -59,6 +75,76 @@ while True:
         elif comp:
             x_comp.append(int(line[0]))
             y_comp.append(int(line[1].split("\n")[0]))
+    else:
+        rank = int(line[0])
+        time_rank = int(line[1].split("\n")[0])
+
+        x_rank.append(rank)
+        y_rank.append(time_rank)
+
+
+        if alt: 
+            x_alt_rank.append(rank)
+            y_alt_rank.append(time_rank)
+        elif ind: 
+            x_ind_rank.append(rank)
+            y_ind_rank.append(time_rank)
+        elif comp:
+            x_comp_rank.append(rank)
+            y_comp_rank.append(time_rank)
+        
+
+# accumulate x and y
+def accumulate(x, y):
+    plot1 = {}
+    for i in range(0, len(x)):
+        plot1[x[i]] = 0
+    for i in range(0, len(x)):
+        plot1[x[i]] += y[i]
+    return plot1
+
+
+
+"""print(x_alt_rank)
+print(y_alt_rank)
+print(x_ind_rank)
+print(y_ind_rank)
+print(x_comp_rank)
+print(y_comp_rank)"""
+
+plot1 = accumulate(x_rank, y_rank)
+
+plt.figure(0)
+plt.bar(list(plot1.keys()), list(plot1.values()))
+plt.title("all player rank")
+
+plot2 = accumulate(x_alt_rank, y_alt_rank)
+plt.figure(1)
+plt.bar(list(plot2.keys()), list(plot2.values()))
+plt.title("altruist rank")
+
+plot3 = accumulate(x, y)
+plt.figure(2)
+plt.bar(list(plot3.keys()), list(plot3.values()))
+plt.title("all player")
+
+plot4 = accumulate(x_alt, y_alt)
+plt.figure(3)
+plt.bar(list(plot4.keys()), list(plot4.values()))
+plt.title("altruist")
+
+plot5 = accumulate(x_ind, y_ind)
+plt.figure(4)
+plt.bar(list(plot5.keys()), list(plot5.values()))
+plt.title("neutral")
+
+plot6 = accumulate(x_comp, y_comp)
+plt.figure(5)
+plt.bar(list(plot6.keys()), list(plot6.values()))
+plt.title("competitive")
+
+#print(list(plot1.keys()))
+#print(list(plot1.values()))
 
 #fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1)
 
@@ -155,9 +241,6 @@ std_comp = compute_std_deviation(x_comp, y_comp, avg_comp)
 print("Standard derivation of all competitive players: "+str(std_comp))
 
 
-plt.figure(0)
-plt.bar(x, y)
-plt.title("all together wrong")
 
 """p = even_out(x, y)
 x, y = p[0], p[1]

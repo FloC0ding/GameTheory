@@ -27,6 +27,7 @@ class Agent:
         
 
         self.output = {}
+        self.output_rank = {}
             
             
     def get_position (self):

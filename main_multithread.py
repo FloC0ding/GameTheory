@@ -167,12 +167,13 @@ class Maze():
             #and remove those players from self.players
             if self.player_out_of_bound(p):
                 self.p_outofbound += 1
-                """if p.count not in p.output:
+                if p.count not in p.output:
                     p.output[p.count] = 1
-                else: p.output[p.count] += 1"""
-                if self.p_outofbound not in p.output:
-                    p.output[self.p_outofbound] = 1
-                else: p.output[self.p_outofbound] += 1
+                else: p.output[p.count] += 1
+
+                if self.p_outofbound not in p.output_rank:
+                    p.output_rank[self.p_outofbound] = 1
+                else: p.output_rank[self.p_outofbound] += 1
 
                 p.visited.clear()
                 p.stack.clear()
