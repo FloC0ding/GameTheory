@@ -5,7 +5,7 @@ import numpy as np
 import math
 
 
-name = "10_30_10_1686847170.9179761.txt"
+name = "10_2000_12_1686849148.0110052.txt"
 
 path = "C:/Users/"+getpass.getuser()+"/git/Game Theory/Maze_Measuring_Data/"+name
 file = open(path, "r")
@@ -112,59 +112,71 @@ print(y_ind_rank)
 print(x_comp_rank)
 print(y_comp_rank)"""
 
+def compute_min_max(x, y):
+    mi, ma = 10000000, 0
+    for i in range(0, len(y)):
+        mi = min(mi, y[i])
+        ma = max(ma, y[i])
+    return (mi, ma)
+
 plot1 = accumulate(x_rank, y_rank)
+m_rank = max(plot1.values())
 
 plt.figure(0)
 plt.bar(list(plot1.keys()), list(plot1.values()))
 plt.title("all player rank")
 
+
 plot2 = accumulate(x_alt_rank, y_alt_rank)
+
 plt.figure(1)
 plt.bar(list(plot2.keys()), list(plot2.values()))
 plt.title("altruist rank")
+plt.ylim(0, m_rank)
+
+plot7 = accumulate(x_ind_rank, y_ind_rank)
+plt.figure(6)
+plt.bar(list(plot7.keys()), list(plot7.values()))
+plt.title("neutral rank")
+plt.ylim(0, m_rank)
+
+plot8 = accumulate(x_comp_rank, y_comp_rank)
+plt.figure(7)
+plt.bar(list(plot8.keys()), list(plot8.values()))
+plt.title("competitive rank")
+plt.ylim(0, m_rank)
 
 plot3 = accumulate(x, y)
+m = max(list(plot3.values()))
 plt.figure(2)
 plt.bar(list(plot3.keys()), list(plot3.values()))
 plt.title("all player")
+
 
 plot4 = accumulate(x_alt, y_alt)
 plt.figure(3)
 plt.bar(list(plot4.keys()), list(plot4.values()))
 plt.title("altruist")
+plt.ylim(0, m)
 
 plot5 = accumulate(x_ind, y_ind)
 plt.figure(4)
 plt.bar(list(plot5.keys()), list(plot5.values()))
 plt.title("neutral")
+plt.ylim(0, m)
 
 plot6 = accumulate(x_comp, y_comp)
 plt.figure(5)
 plt.bar(list(plot6.keys()), list(plot6.values()))
 plt.title("competitive")
+plt.ylim(0, m)
 
-#print(list(plot1.keys()))
-#print(list(plot1.values()))
 
-#fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1)
 
-#plt.figure(1)
-#plt.bar(x, y)
-#ax1.bar(x, y)
-#ax1.set_title("all players")
-
-#ax2.bar(x_alt, y_alt)
-#ax2.set_title("Altruists")
-
-#ax3.bar(x_ind, y_ind)
-#ax3.set_title("Individualists")
-
-#ax4.bar(x_comp, y_comp)
-#ax4.set_title("Competitive")
-
+# useless code start 
 offset = 8  #offset for max value
 width = 10      
-print("Width of each pillar is: "+str(width+1))
+#print("Width of each pillar is: "+str(width+1))
 
 def even_out(x, y):
     x_n, y_n = [], []
@@ -198,6 +210,8 @@ def even_out(x, y):
             y_final.append(y_grouped[i])
 
     return (x_final, y_final)
+
+# useless code end
 
 def compute_avg(x, y):
     sum = 0.0
@@ -240,7 +254,25 @@ print("Standard derivation of all neutral players: "+str(std_ind))
 std_comp = compute_std_deviation(x_comp, y_comp, avg_comp)
 print("Standard derivation of all competitive players: "+str(std_comp))
 
+print("_____________________________________________________________")
 
+avg_rank = compute_avg(x_rank, y_rank)
+print("Average of all players rank: "+str(avg_rank))
+avg_alt_rank = compute_avg(x_alt_rank, y_alt_rank)
+print("Average of all altruist players rank: "+str(avg_alt_rank))
+avg_ind_rank = compute_avg(x_ind_rank, y_ind_rank)
+print("Average of all neutral players rank: "+str(avg_ind_rank))
+avg_comp_rank = compute_avg(x_comp_rank, y_comp_rank)
+print("Average of all competitive players rank: "+str(avg_comp_rank))
+
+std_rank = compute_std_deviation(x_rank, y_rank, avg_rank)
+print("Standard derivation of all players rank: "+str(std_rank))
+std_alt_rank = compute_std_deviation(x_alt_rank, y_alt_rank, avg_alt_rank)
+print("Standard derivation of all altruist players rank: "+str(std_alt_rank))
+std_ind_rank = compute_std_deviation(x_ind_rank, y_ind_rank, avg_ind_rank)
+print("Standard derivation of all neutral players rank: "+str(std_ind_rank))
+std_comp_rank = compute_std_deviation(x_comp_rank, y_comp_rank, avg_comp_rank)
+print("Standard derivation of all competitive players rank: "+str(std_comp_rank))
 
 """p = even_out(x, y)
 x, y = p[0], p[1]
