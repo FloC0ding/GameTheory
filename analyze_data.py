@@ -155,8 +155,10 @@ std_comp = compute_std_deviation(x_comp, y_comp, avg_comp)
 print("Standard derivation of all competitive players: "+str(std_comp))
 
 
+plt.figure(0)
+plt.bar(x, y)
 
-p = even_out(x, y)
+"""p = even_out(x, y)
 x, y = p[0], p[1]
 
 for k in p[1]: data_y_max = max(data_y_max, k)
@@ -189,7 +191,7 @@ plt.ylim(0, data_y_max+offset)
 plt.figure(4)
 plt.bar(x_comp, y_comp)
 plt.title("competitive")
-plt.ylim(0, data_y_max+offset)
+plt.ylim(0, data_y_max+offset)"""
 
 
 
