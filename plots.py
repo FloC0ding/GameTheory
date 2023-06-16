@@ -6,10 +6,10 @@ import pandas as pd
 
 SIZE = 20
 ITERATIONS = 2000
-AMOUNT = 12
-ALT = 4
-IND = 4
-COM = 4
+AMOUNT = 18
+ALT = 18
+IND = 0
+COM = 0
 
 file_name = ''+str(SIZE)+'_'+str(ITERATIONS)+'_' + \
     str(AMOUNT)+'_'+str(ALT)+'_'+str(IND)+'_'+str(COM)
@@ -33,7 +33,6 @@ for x in f:
     values = x.split()
     if (values[0] == "player:"):
         role = values[2]
-        print("Role Change: "+role)
     else:
         (key, val) = values
         if (role == "Individualist"):
@@ -63,19 +62,25 @@ plt.hist(altlist, 100, histtype='bar', color='r', alpha=0.7)
 plt.title("Altruistic Part")
 plt.xlabel("# of steps")
 plt.ylabel("# of agents")
-plt.show()
+plt.savefig('plots/'+file_name+"_alt.png")
+print('plots/'+file_name+"_alt.png saved.")
+# plt.show()
 
 plt.figure(1,figsize=(5,5))
 plt.hist(indlist, 100, histtype='bar', color='g', alpha=0.7)
 plt.title("Individualistic Part")
 plt.xlabel("# of steps")
 plt.ylabel("# of agents")
-plt.show()
+plt.savefig('plots/'+file_name+"_ind.png")
+print('plots/'+file_name+"_ind.png saved.")
+#plt.show()
 
 plt.figure(2,figsize=(5,5))
 plt.hist(comlist, 100, histtype='bar', color='b', alpha=0.7)
 plt.title("Competitive Part")
 plt.xlabel("# of steps")
 plt.ylabel("# of agents")
-plt.show()
+plt.savefig('plots/'+file_name+"_com.png")
+print('plots/'+file_name+"_com.png saved.")
+#plt.show()
 
