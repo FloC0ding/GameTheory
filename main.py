@@ -42,12 +42,12 @@ wall_y = height/(n)
 p_size = 5
 
 #simulation settings
-update_speed = 0.000005  #number of seconds for which the update function is called
+update_speed = 1  #number of seconds for which the update function is called
 num_it = 100
 iterations = num_it
 c_temp = []
 new_maze_perIt = False
-gui = False
+gui = True
 
 #counts the minimal number of steps to escape works only for same_maze
 solve_maze_step = 0
@@ -135,7 +135,7 @@ class Maze(Widget):
                 p.old_x, p.old_y = p.pos_x, p.pos_y
 
         #draw fields of visited, stack and dead branches here
-        """if gui: 
+        if gui: 
             for p in self.players:
                 with self.canvas:   Color(0, 1, 1)  #Turqoise
                 for v in p.visited:
@@ -145,7 +145,7 @@ class Maze(Widget):
                     self.draw_field(v)
                 for v in p.dead_ends:
                     with self.canvas: Color(0.5, 0.5, 1)    #Purple
-                    self.draw_field(v)"""
+                    self.draw_field(v)
 
         #draw players
         if gui: 
