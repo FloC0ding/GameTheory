@@ -4,17 +4,17 @@ import matplotlib.colors as col
 import os
 import pandas as pd
 
-SIZE = 20
+SIZE = 30
 ITERATIONS = 2000
-AMOUNT = 18
-ALT = 18
-IND = 0
-COM = 0
+AMOUNT = 12
+ALT = 0
+IND = 6
+COM = 6
 
 file_name = ''+str(SIZE)+'_'+str(ITERATIONS)+'_' + \
     str(AMOUNT)+'_'+str(ALT)+'_'+str(IND)+'_'+str(COM)
 script_dir = os.path.dirname(__file__)
-rel_path = "maze_data/main_data/"+file_name+".txt"
+rel_path = "maze_data/large_data/"+file_name+".txt"
 abs_file_path = os.path.join(script_dir, rel_path)
 
 f = open(abs_file_path)
@@ -80,7 +80,7 @@ plt.hist(comlist, 100, histtype='bar', color='b', alpha=0.7)
 plt.title("Competitive Part")
 plt.xlabel("# of steps")
 plt.ylabel("# of agents")
-plt.savefig('plots/'+file_name+"_com.png")
+plt.savefig('plots/large_plots/'+file_name+"_com.png")
 print('plots/'+file_name+"_com.png saved.")
 #plt.show()
 
