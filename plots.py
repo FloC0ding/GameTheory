@@ -5,16 +5,16 @@ import os
 import pandas as pd
 
 SIZE = 30
-ITERATIONS = 2000
-AMOUNT = 12
-ALT = 0
-IND = 6
-COM = 6
+ITERATIONS = 10000
+AMOUNT = 1
+ALT = 1
+IND = 0
+COM = 0
 
 file_name = ''+str(SIZE)+'_'+str(ITERATIONS)+'_' + \
     str(AMOUNT)+'_'+str(ALT)+'_'+str(IND)+'_'+str(COM)
 script_dir = os.path.dirname(__file__)
-rel_path = "maze_data/large_data/"+file_name+".txt"
+rel_path = "maze_data/1/"+file_name+".txt"
 abs_file_path = os.path.join(script_dir, rel_path)
 
 f = open(abs_file_path)
