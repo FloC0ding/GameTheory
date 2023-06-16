@@ -56,8 +56,9 @@ comlist = [key for key, val in com_dict.items() for _ in range(val)]
 indlist = [key for key, val in ind_dict.items() for _ in range(val)]
 # plt.hist(indlist, bins=33, alpha = 0.333,color='r')
 
-
+LIM = 300
 plt.figure(0,figsize=(5,5))
+plt.ylim((0, LIM))
 plt.hist(altlist, 100, histtype='bar', color='r', alpha=0.7)
 plt.title("Altruistic Part")
 plt.xlabel("# of steps")
@@ -67,6 +68,7 @@ print('plots/'+file_name+"_alt.png saved.")
 # plt.show()
 
 plt.figure(1,figsize=(5,5))
+plt.ylim((0, LIM))
 plt.hist(indlist, 100, histtype='bar', color='g', alpha=0.7)
 plt.title("Individualistic Part")
 plt.xlabel("# of steps")
@@ -76,11 +78,12 @@ print('plots/'+file_name+"_ind.png saved.")
 #plt.show()
 
 plt.figure(2,figsize=(5,5))
+plt.ylim((0, LIM))
 plt.hist(comlist, 100, histtype='bar', color='b', alpha=0.7)
 plt.title("Competitive Part")
 plt.xlabel("# of steps")
 plt.ylabel("# of agents")
 plt.savefig('plots/'+file_name+"_com.png")
 print('plots/'+file_name+"_com.png saved.")
-plt.show()
+# plt.show()
 
