@@ -56,7 +56,7 @@ comlist = [key for key, val in com_dict.items() for _ in range(val)]
 indlist = [key for key, val in ind_dict.items() for _ in range(val)]
 # plt.hist(indlist, bins=33, alpha = 0.333,color='r')
 
-LIM = 300
+LIM = 225
 plt.figure(0,figsize=(5,5))
 plt.ylim((0, LIM))
 plt.hist(altlist, 100, histtype='bar', color='r', alpha=0.7)
